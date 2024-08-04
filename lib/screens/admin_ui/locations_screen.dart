@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/add_location_screen.dart';
+import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/colors.dart';
 
 class LocationsScreen extends StatelessWidget {
@@ -27,18 +30,46 @@ class LocationsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: LocationItem(
-                  name: "Chimanimani",
-                  district: "Maorere",
-                  onTap: () {},
-                ),
+        child: BlocBuilder<LocationBloc, LocationState>(
+          builder: (context, state) {
+            if (state is LoadedLocations) {
+              final locations = state.locations.reversed.toList();
+
+              return locations.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: locations.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: LocationItem(
+                            name: locations[index].name,
+                            district: locations[index].city,
+                            onTap: () {},
+                          ),
+                        );
+                      })
+                  : Center(
+                      child: Text(
+                        "Not Found",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
+            }
+
+            if (state is LocationStateLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }),
+            }
+
+            return CustomButton(
+              label: "Reload",
+              onPressed: () {
+                context.read<LocationBloc>().add(LoadLocations());
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: CustomColors.kPrimaryColor,

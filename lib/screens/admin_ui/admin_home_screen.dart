@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
+import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/farmers_screen.dart';
 import 'package:tisha_app/screens/admin_ui/inputs_screen.dart';
 import 'package:tisha_app/screens/admin_ui/locations_screen.dart';
+import 'package:tisha_app/screens/profile_screen.dart';
+import 'package:tisha_app/screens/widgets/custom_button.dart';
+import 'package:tisha_app/screens/widgets/menu_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -29,7 +36,9 @@ class AdminHomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, ProfileScreen.route());
+            },
             icon: Icon(
               Icons.account_box_outlined,
               color: CustomColors.kIconColor,
@@ -43,82 +52,85 @@ class AdminHomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            MenuItem(
-              title: "Registered Farmers",
-              subTitle: "100 farmers",
-              icon: Icons.people,
-              onTap: () {
-                Navigator.push(context, FarmersScreen.route());
+            BlocBuilder<FarmerBloc, FarmerState>(
+              builder: (context, state) {
+                if (state is LoadedFarmers) {
+                  return MenuItem(
+                    title: "Registered Farmers",
+                    subTitle: "${state.farmers.length} farmers",
+                    icon: Icons.people,
+                    onTap: () {
+                      Navigator.push(context, FarmersScreen.route());
+                    },
+                  );
+                }
+
+                if (state is FarmerStateLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return CustomButton(
+                  label: "Reload",
+                  onPressed: () {
+                    context.read<FarmerBloc>().add(LoadFarmers());
+                  },
+                );
               },
             ),
-            MenuItem(
-              title: "Inputs",
-              subTitle: "100 inputs",
-              icon: Icons.water_drop_outlined,
-              onTap: () {
-                Navigator.push(context, InputsScreen.route());
+            BlocBuilder<InputBloc, InputState>(
+              builder: (context, state) {
+                if (state is LoadedInputs) {
+                  return MenuItem(
+                    title: "Registered Inputs",
+                    subTitle: "${state.inputs.length} inputs",
+                    icon: Icons.water_drop,
+                    onTap: () {
+                      Navigator.push(context, InputsScreen.route());
+                    },
+                  );
+                }
+
+                if (state is InputStateLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return CustomButton(
+                  label: "Reload",
+                  onPressed: () {
+                    context.read<InputBloc>().add(LoadInputs());
+                  },
+                );
               },
             ),
-            MenuItem(
-              title: "Locations",
-              subTitle: "100 cities",
-              icon: Icons.location_city,
-              onTap: () {
-                Navigator.push(context, LocationsScreen.route());
+            BlocBuilder<LocationBloc, LocationState>(
+              builder: (context, state) {
+                if (state is LoadedLocations) {
+                  return MenuItem(
+                    title: "Locations",
+                    subTitle: "${state.locations.length} locations",
+                    icon: Icons.location_city,
+                    onTap: () {
+                      Navigator.push(context, LocationsScreen.route());
+                    },
+                  );
+                }
+
+                if (state is LocationStateLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return CustomButton(
+                  label: "Reload",
+                  onPressed: () {
+                    context.read<LocationBloc>().add(LoadLocations());
+                  },
+                );
               },
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class MenuItem extends StatelessWidget {
-  final String title;
-  final String subTitle;
-  final IconData icon;
-  final Function()? onTap;
-  const MenuItem({
-    super.key,
-    required this.title,
-    required this.subTitle,
-    required this.icon,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(3.0),
-        shape: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: CustomColors.kBorderColor,
-          ),
-        ),
-        onTap: onTap,
-        leading: CircleAvatar(
-          maxRadius: 40,
-          backgroundColor: CustomColors.kContainerBackgroundColor,
-          child: Icon(
-            icon,
-            color: CustomColors.kIconColor,
-          ),
-        ),
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            subTitle,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
         ),
       ),
     );

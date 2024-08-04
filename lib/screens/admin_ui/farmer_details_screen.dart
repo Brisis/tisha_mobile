@@ -9,20 +9,20 @@ import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class AddFarmerScreen extends StatefulWidget {
+class FarmerDetailsScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const AddFarmerScreen(),
+      builder: (context) => const FarmerDetailsScreen(),
     );
   }
 
-  const AddFarmerScreen({super.key});
+  const FarmerDetailsScreen({super.key});
 
   @override
-  State<AddFarmerScreen> createState() => _AddFarmerScreenState();
+  State<FarmerDetailsScreen> createState() => _FarmerDetailsScreenState();
 }
 
-class _AddFarmerScreenState extends State<AddFarmerScreen> {
+class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
   late Location? selectedLocation;
   List<Location> locations = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

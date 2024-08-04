@@ -26,10 +26,22 @@ class SearchFarmer extends FarmerEvent {
   });
 }
 
-class LoadFarmers extends FarmerEvent {
-  final String userId;
+class LoadFarmers extends FarmerEvent {}
 
-  const LoadFarmers({
-    required this.userId,
+class AddFarmerEvent extends FarmerEvent {
+  final String name;
+  final double farmSize;
+  final String? coordinates;
+  final String locationId;
+  final String email;
+  final String password;
+
+  const AddFarmerEvent({
+    required this.name,
+    required this.farmSize,
+    this.coordinates,
+    required this.locationId,
+    required this.email,
+    required this.password,
   });
 }

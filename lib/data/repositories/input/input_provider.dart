@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -23,6 +24,42 @@ class InputProvider {
       throw const FetchDataException(message: "No Internet connection");
     } on TimeoutException {
       throw const ApiNotRespondingException(message: "Api not responding");
+    }
+  }
+
+  Future<dynamic> addInput({
+    required String token,
+    required String name,
+    required int quantity,
+    required String unit,
+    required String locationId,
+    required String userId,
+  }) async {
+    try {
+      Map body = {
+        "name": name,
+        "quantity": quantity,
+        "unit": unit,
+        "locationId": locationId,
+        "userId": userId,
+      };
+      final response = await http.post(
+        Uri.parse("${AppUrls.SERVER_URL}/inputs"),
+        body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+      // throw ExceptionHandlers.getExceptionString(e);
     }
   }
 }

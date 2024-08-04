@@ -15,3 +15,19 @@ class SearchInputs extends InputEvent {
 }
 
 class LoadInputs extends InputEvent {}
+
+class AddInputEvent extends InputEvent {
+  final String name;
+  final int quantity;
+  final String unit;
+  final String locationId;
+  final String userId;
+
+  const AddInputEvent({
+    required this.name,
+    required this.quantity,
+    required this.unit,
+    required this.locationId,
+    required this.userId,
+  });
+}

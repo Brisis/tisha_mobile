@@ -8,3 +8,13 @@ abstract class LocationEvent extends Equatable {
 }
 
 class LoadLocations extends LocationEvent {}
+
+class AddLocationEvent extends LocationEvent {
+  final String name;
+  final String city;
+
+  const AddLocationEvent({
+    required this.name,
+    required this.city,
+  });
+}

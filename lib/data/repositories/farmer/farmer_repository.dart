@@ -7,13 +7,37 @@ class FarmerRepository {
 
   Future<List<User>> getFarmers({
     required String token,
-    required String userId,
     String? query,
   }) async {
     final response = await farmerProvider.getFarmers(
       token: token,
-      userId: userId,
       query: query,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => User.fromJson(i),
+        )
+        .toList();
+  }
+
+  Future<List<User>> addFarmer({
+    required String token,
+    required String name,
+    required double farmSize,
+    required String locationId,
+    String? coordinates,
+    required String email,
+    required String password,
+  }) async {
+    final response = await farmerProvider.addFarmer(
+      token: token,
+      name: name,
+      farmSize: farmSize,
+      locationId: locationId,
+      coordinates: coordinates,
+      email: email,
+      password: password,
     );
 
     return (response as List<dynamic>)

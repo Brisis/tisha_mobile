@@ -14,4 +14,22 @@ class LocationRepository {
         )
         .toList();
   }
+
+  Future<List<Location>> addLocation({
+    required String token,
+    required String name,
+    required String city,
+  }) async {
+    final response = await locationProvider.addLocation(
+      token: token,
+      name: name,
+      city: city,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => Location.fromJson(i),
+        )
+        .toList();
+  }
 }

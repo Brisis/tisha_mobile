@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/core/config/exception_handlers.dart';
+import 'package:tisha_app/core/config/storage.dart';
 import 'package:tisha_app/data/models/location.dart';
 import 'package:tisha_app/data/repositories/location/location_repository.dart';
 
@@ -18,6 +19,35 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       emit(LocationStateLoading());
       try {
         final locations = await locationRepository.getLocations();
+
+        emit(LoadedLocations(locations: locations));
+      } on AppException catch (e) {
+        emit(
+          LocationStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          LocationStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
+    on<AddLocationEvent>((event, emit) async {
+      emit(LocationStateLoading());
+      try {
+        final token = await getAuthToken();
+
+        final locations = await locationRepository.addLocation(
+          token: token!,
+          name: event.name,
+          city: event.city,
+        );
 
         emit(LoadedLocations(locations: locations));
       } on AppException catch (e) {

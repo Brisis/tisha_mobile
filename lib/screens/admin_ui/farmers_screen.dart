@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/add_farmer_screen.dart';
+import 'package:tisha_app/screens/admin_ui/farmer_screen.dart';
+import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/colors.dart';
 
 class FarmersScreen extends StatelessWidget {
@@ -27,18 +31,53 @@ class FarmersScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: UserItem(
-                  name: "Jane Marrie",
-                  inputs: 10,
-                  onTap: () {},
-                ),
+        child: BlocBuilder<FarmerBloc, FarmerState>(
+          builder: (context, state) {
+            if (state is LoadedFarmers) {
+              final farmers = state.farmers;
+              return farmers.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: farmers.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: UserItem(
+                            name: farmers[index].name,
+                            inputs: farmers[index].inputs.length,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                FarmerScreen.route(
+                                  user: farmers[index],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Text(
+                        "Not Found",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
+            }
+
+            if (state is FarmerStateLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }),
+            }
+
+            return CustomButton(
+              label: "Reload",
+              onPressed: () {
+                context.read<FarmerBloc>().add(LoadFarmers());
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: CustomColors.kPrimaryColor,

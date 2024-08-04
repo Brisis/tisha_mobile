@@ -6,7 +6,7 @@ import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/admin_home_screen.dart';
 import 'package:tisha_app/screens/app_loader_screen.dart';
-import 'package:tisha_app/screens/auth/auth_register_screen.dart';
+import 'package:tisha_app/screens/auth/auth_login_screen.dart';
 import 'package:tisha_app/screens/common/app_blocs.dart';
 import 'package:tisha_app/screens/common/app_repositories.dart';
 import 'package:tisha_app/screens/welcome_screen.dart';
@@ -42,6 +42,7 @@ class _MainAppState extends State<MainApp> {
       navigatorKey: navigatorKey,
       title: 'Tisha App',
       theme: ThemeData(
+        fontFamily: "Proxima",
         textTheme: CustomTypography.textTheme,
       ),
       builder: (context, child) {
@@ -59,9 +60,7 @@ class _MainAppState extends State<MainApp> {
                 LoadUser(user: state.user),
               );
 
-              BlocProvider.of<FarmerBloc>(context).add(
-                LoadFarmers(userId: state.user.id),
-              );
+              BlocProvider.of<FarmerBloc>(context).add(LoadFarmers());
 
               _navigator!.pushAndRemoveUntil(
                 AdminHomeScreen.route(),
@@ -71,7 +70,7 @@ class _MainAppState extends State<MainApp> {
 
             if (state is AuthenticationStateUserLoggedOut) {
               _navigator!.pushAndRemoveUntil(
-                AuthRegisterScreen.route(),
+                AuthLoginScreen.route(),
                 (route) => false,
               );
             }
@@ -82,6 +81,12 @@ class _MainAppState extends State<MainApp> {
                 (route) => false,
               );
             }
+
+            // if (state is AuthenticationStateError) {
+            //   context
+            //       .read<AuthenticationBloc>()
+            //       .add(AuthenticationEventLogoutUser());
+            // }
 
             // if (state is AuthenticationStateCodeSent) {
             //   ScaffoldMessenger.of(context).showSnackBar(

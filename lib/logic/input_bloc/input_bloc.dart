@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/core/config/exception_handlers.dart';
+import 'package:tisha_app/core/config/storage.dart';
 import 'package:tisha_app/data/models/input.dart';
 import 'package:tisha_app/data/repositories/input/input_repository.dart';
 
@@ -18,6 +19,38 @@ class InputBloc extends Bloc<InputEvent, InputState> {
       emit(InputStateLoading());
       try {
         final inputs = await inputRepository.getInputs();
+
+        emit(LoadedInputs(inputs: inputs));
+      } on AppException catch (e) {
+        emit(
+          InputStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          InputStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
+    on<AddInputEvent>((event, emit) async {
+      emit(InputStateLoading());
+      try {
+        final token = await getAuthToken();
+
+        final inputs = await inputRepository.addInput(
+          token: token!,
+          name: event.name,
+          quantity: event.quantity,
+          locationId: event.locationId,
+          unit: event.unit,
+          userId: event.userId,
+        );
 
         emit(LoadedInputs(inputs: inputs));
       } on AppException catch (e) {

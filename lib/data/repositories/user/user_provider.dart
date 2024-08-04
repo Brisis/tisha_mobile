@@ -18,6 +18,7 @@ class UserProvider {
     try {
       Map body = {
         "name": user.name,
+        "farmSize": user.farmSize,
         "coordinates": user.coordinates,
         "role": user.role,
         "locationId": user.locationId,

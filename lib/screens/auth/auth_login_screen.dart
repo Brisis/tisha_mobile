@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
+import 'package:tisha_app/screens/widgets/custom_button.dart';
+import 'package:tisha_app/screens/widgets/custom_text_field.dart';
+import 'package:tisha_app/theme/colors.dart';
+import 'package:tisha_app/theme/spaces.dart';
 
 class AuthLoginScreen extends StatefulWidget {
   static Route route() {
@@ -14,11 +20,78 @@ class AuthLoginScreen extends StatefulWidget {
 }
 
 class _AuthLoginScreenState extends State<AuthLoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [],
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              CustomSpaces.verticalSpace(height: 50),
+              Text(
+                "Login",
+                style: Theme.of(context).textTheme.displayLarge,
+                textAlign: TextAlign.center,
+              ),
+              CustomSpaces.verticalSpace(height: 15),
+              CustomTextField(
+                label: "Email Address",
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              CustomSpaces.verticalSpace(height: 15),
+              CustomTextField(
+                label: "Password",
+                controller: _passwordController,
+                obscureText: true,
+              ),
+              BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  if (state is AuthenticationStateError) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Text(
+                        state.authError!.dialogText,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: CustomColors.kWarningColor,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              CustomSpaces.verticalSpace(height: 30),
+              BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  if (state is AuthenticationStateLoading) {
+                    return const CustomButton();
+                  }
+                  return CustomButton(
+                    label: "Login",
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        context.read<AuthenticationBloc>().add(
+                              AuthenticationEventLoginUser(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text.trim(),
+                              ),
+                            );
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ class User extends Equatable {
   final String id;
   final String name;
   final String role;
+  final double? farmSize;
   final String? locationId;
   final String? coordinates;
   final String email;
@@ -19,6 +20,7 @@ class User extends Equatable {
     required this.id,
     required this.name,
     required this.role,
+    this.farmSize,
     this.locationId,
     this.location,
     this.coordinates,
@@ -31,6 +33,7 @@ class User extends Equatable {
   User copyWith({
     String? name,
     String? role,
+    double? farmSize,
     String? locationId,
     String? coordinates,
     String? email,
@@ -42,6 +45,7 @@ class User extends Equatable {
         id: id,
         name: name ?? this.name,
         role: role ?? this.role,
+        farmSize: farmSize ?? this.farmSize,
         locationId: locationId ?? this.locationId,
         coordinates: coordinates ?? this.coordinates,
         email: email ?? this.email,
@@ -59,6 +63,9 @@ class User extends Equatable {
         id: json["id"],
         name: json["name"],
         role: json["role"],
+        farmSize: json["farmSize"] == null
+            ? null
+            : double.parse(json["farmSize"].toString()),
         locationId:
             json["locationId"] == null ? null : json["locationId"] as String,
         coordinates:
@@ -80,6 +87,7 @@ class User extends Equatable {
         "id": id,
         "name": name,
         "role": role,
+        "farmSize": farmSize,
         "locationId": locationId,
         "coordinates": coordinates,
         "email": email,
@@ -94,6 +102,7 @@ class User extends Equatable {
         id,
         name,
         role,
+        farmSize,
         locationId,
         coordinates,
         email,

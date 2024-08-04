@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tisha_app/screens/admin_ui/admin_home_screen.dart';
+import 'package:tisha_app/screens/auth/auth_login_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
@@ -24,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               Text(
                 "Tisha App",
-                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -32,7 +32,7 @@ class WelcomeScreen extends StatelessWidget {
               CustomButton(
                 label: "Get Started",
                 onPressed: () {
-                  Navigator.push(context, AdminHomeScreen.route());
+                  Navigator.push(context, AuthLoginScreen.route());
                 },
               ),
             ],

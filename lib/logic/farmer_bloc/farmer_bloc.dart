@@ -22,7 +22,39 @@ class FarmerBloc extends Bloc<FarmerEvent, FarmerState> {
 
         final farmers = await farmerRepository.getFarmers(
           token: token!,
-          userId: event.userId,
+        );
+
+        emit(LoadedFarmers(farmers: farmers));
+      } on AppException catch (e) {
+        emit(
+          FarmerStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          FarmerStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
+    on<AddFarmerEvent>((event, emit) async {
+      emit(FarmerStateLoading());
+      try {
+        final token = await getAuthToken();
+
+        final farmers = await farmerRepository.addFarmer(
+          token: token!,
+          name: event.name,
+          farmSize: event.farmSize,
+          locationId: event.locationId,
+          coordinates: event.coordinates,
+          email: event.email,
+          password: event.password,
         );
 
         emit(LoadedFarmers(farmers: farmers));
@@ -53,7 +85,6 @@ class FarmerBloc extends Bloc<FarmerEvent, FarmerState> {
         if (event.query != null && event.locationId != null) {
           farmers = await farmerRepository.getFarmers(
             token: token!,
-            userId: event.userId,
             query: event.query,
           );
           farmers = farmers
@@ -62,7 +93,6 @@ class FarmerBloc extends Bloc<FarmerEvent, FarmerState> {
         } else if (event.locationId != null) {
           farmers = await farmerRepository.getFarmers(
             token: token!,
-            userId: event.userId,
           );
           farmers = farmers
               .where((person) => person.locationId == event.locationId)
@@ -70,7 +100,6 @@ class FarmerBloc extends Bloc<FarmerEvent, FarmerState> {
         } else {
           farmers = await farmerRepository.getFarmers(
             token: token!,
-            userId: event.userId,
             query: event.query,
           );
         }

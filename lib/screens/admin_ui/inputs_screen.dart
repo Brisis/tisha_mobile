@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/add_input_screen.dart';
+import 'package:tisha_app/screens/widgets/custom_button.dart';
+import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
 class InputsScreen extends StatelessWidget {
@@ -27,18 +31,45 @@ class InputsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: InputItem(
-                  name: "Maize Seeds",
-                  farmers: 10,
-                  onTap: () {},
-                ),
+        child: BlocBuilder<InputBloc, InputState>(
+          builder: (context, state) {
+            if (state is LoadedInputs) {
+              final inputs = state.inputs.reversed.toList();
+              return inputs.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InputItem(
+                            name: "Maize Seeds",
+                            farmers: 10,
+                            onTap: () {},
+                          ),
+                        );
+                      })
+                  : Center(
+                      child: Text(
+                        "Not Found",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
+            }
+
+            if (state is InputStateLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }),
+            }
+
+            return CustomButton(
+              label: "Reload",
+              onPressed: () {
+                context.read<InputBloc>().add(LoadInputs());
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: CustomColors.kPrimaryColor,
@@ -49,52 +80,6 @@ class InputsScreen extends StatelessWidget {
         child: Icon(
           Icons.add,
           color: CustomColors.kWhiteTextColor,
-        ),
-      ),
-    );
-  }
-}
-
-class InputItem extends StatelessWidget {
-  final String name;
-  final int farmers;
-  final Function()? onTap;
-  const InputItem({
-    super.key,
-    required this.name,
-    required this.farmers,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.all(3.0),
-      shape: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: CustomColors.kBorderColor,
-        ),
-      ),
-      onTap: onTap,
-      leading: CircleAvatar(
-        maxRadius: 40,
-        backgroundColor: CustomColors.kContainerBackgroundColor,
-        child: Icon(
-          Icons.person,
-          color: CustomColors.kIconColor,
-        ),
-      ),
-      title: Text(
-        name,
-        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Text(
-          "$farmers Farmers",
-          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );

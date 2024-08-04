@@ -69,42 +69,6 @@ class AuthenticationBloc
       }
     });
 
-    on<AuthenticationEventRegisterUser>((event, emit) async {
-      emit(
-        AuthenticationStateLoading(),
-      );
-
-      try {
-        final response = await authenticationRepository.register(
-          phone: event.phone,
-          fcmToken: event.fcmToken,
-        );
-
-        emit(
-          AuthenticationStateCodeSent(
-            message: response["message"],
-            phone: response["phone"],
-          ),
-        );
-      } on AppException catch (e) {
-        emit(
-          AuthenticationStateError(
-            authError: AuthError.from(e),
-          ),
-        );
-      } on TimeoutException catch (e) {
-        emit(
-          AuthenticationStateError(
-            authError: AuthError.from(
-              AppException(
-                message: e.message,
-              ),
-            ),
-          ),
-        );
-      }
-    });
-
     on<AuthenticationEventLoginUser>((event, emit) async {
       emit(
         AuthenticationStateLoading(),
@@ -124,6 +88,7 @@ class AuthenticationBloc
         final loggedUser = await authenticationRepository.authenticate(
           token: authToken,
         );
+
         emit(
           AuthenticationStateUserLoggedIn(
             user: loggedUser,
