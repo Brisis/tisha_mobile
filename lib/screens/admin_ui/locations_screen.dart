@@ -5,7 +5,7 @@ import 'package:tisha_app/screens/admin_ui/add_location_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class LocationsScreen extends StatelessWidget {
+class LocationsScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
       builder: (context) => const LocationsScreen(),
@@ -13,6 +13,17 @@ class LocationsScreen extends StatelessWidget {
   }
 
   const LocationsScreen({super.key});
+
+  @override
+  State<LocationsScreen> createState() => _LocationsScreenState();
+}
+
+class _LocationsScreenState extends State<LocationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<LocationBloc>().add(LoadLocations());
+  }
 
   @override
   Widget build(BuildContext context) {

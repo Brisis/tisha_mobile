@@ -6,7 +6,7 @@ import 'package:tisha_app/screens/admin_ui/farmer_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class FarmersScreen extends StatelessWidget {
+class FarmersScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
       builder: (context) => const FarmersScreen(),
@@ -14,6 +14,17 @@ class FarmersScreen extends StatelessWidget {
   }
 
   const FarmersScreen({super.key});
+
+  @override
+  State<FarmersScreen> createState() => _FarmersScreenState();
+}
+
+class _FarmersScreenState extends State<FarmersScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<FarmerBloc>().add(LoadFarmers());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +43,8 @@ class FarmersScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: BlocBuilder<FarmerBloc, FarmerState>(
+          buildWhen: (previous, current) =>
+              previous != current && current is LoadedFarmers,
           builder: (context, state) {
             if (state is LoadedFarmers) {
               final farmers = state.farmers;
@@ -45,10 +58,13 @@ class FarmersScreen extends StatelessWidget {
                             name: farmers[index].name,
                             inputs: farmers[index].inputs.length,
                             onTap: () {
+                              context.read<FarmerBloc>().add(
+                                    LoadFarmer(id: farmers[index].id),
+                                  );
                               Navigator.push(
                                 context,
                                 FarmerScreen.route(
-                                  user: farmers[index],
+                                  userId: farmers[index].id,
                                 ),
                               );
                             },

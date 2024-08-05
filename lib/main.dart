@@ -11,6 +11,7 @@ import 'package:tisha_app/screens/app_loader_screen.dart';
 import 'package:tisha_app/screens/auth/auth_login_screen.dart';
 import 'package:tisha_app/screens/common/app_blocs.dart';
 import 'package:tisha_app/screens/common/app_repositories.dart';
+import 'package:tisha_app/screens/farmer_ui/farmer_profile_screen.dart';
 import 'package:tisha_app/screens/welcome_screen.dart';
 import 'package:tisha_app/theme/typography.dart';
 
@@ -66,10 +67,17 @@ class _MainAppState extends State<MainApp> {
               BlocProvider.of<InputBloc>(context).add(LoadInputs());
               BlocProvider.of<LocationBloc>(context).add(LoadLocations());
 
-              _navigator!.pushAndRemoveUntil(
-                AdminHomeScreen.route(),
-                (route) => false,
-              );
+              if (state.user.role == "FARMER") {
+                _navigator!.pushAndRemoveUntil(
+                  FarmerProfileScreen.route(),
+                  (route) => false,
+                );
+              } else {
+                _navigator!.pushAndRemoveUntil(
+                  AdminHomeScreen.route(),
+                  (route) => false,
+                );
+              }
             }
 
             if (state is AuthenticationStateUserLoggedOut) {

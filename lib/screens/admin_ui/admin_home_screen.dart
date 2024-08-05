@@ -53,6 +53,8 @@ class AdminHomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             BlocBuilder<FarmerBloc, FarmerState>(
+              buildWhen: (previous, current) =>
+                  previous != current && current is LoadedFarmers,
               builder: (context, state) {
                 if (state is LoadedFarmers) {
                   return MenuItem(
@@ -79,6 +81,8 @@ class AdminHomeScreen extends StatelessWidget {
               },
             ),
             BlocBuilder<InputBloc, InputState>(
+              buildWhen: (previous, current) =>
+                  previous != current && current is LoadedInputs,
               builder: (context, state) {
                 if (state is LoadedInputs) {
                   return MenuItem(
@@ -105,6 +109,8 @@ class AdminHomeScreen extends StatelessWidget {
               },
             ),
             BlocBuilder<LocationBloc, LocationState>(
+              buildWhen: (previous, current) =>
+                  previous != current && current is LoadedLocations,
               builder: (context, state) {
                 if (state is LoadedLocations) {
                   return MenuItem(

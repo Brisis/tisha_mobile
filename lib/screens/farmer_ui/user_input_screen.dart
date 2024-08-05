@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/data/models/input.dart';
+import 'package:tisha_app/data/models/farmer_input.dart';
+import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/custom_text_field.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class AddInputToFarmerScreen extends StatefulWidget {
+class UserInputScreen extends StatefulWidget {
   static Route route({
     required String userId,
-    required Input input,
+    required FarmerInput input,
   }) {
     return MaterialPageRoute(
-      builder: (context) => AddInputToFarmerScreen(
+      builder: (context) => UserInputScreen(
         userId: userId,
         input: input,
       ),
@@ -23,21 +25,31 @@ class AddInputToFarmerScreen extends StatefulWidget {
   }
 
   final String userId;
-  final Input input;
-  const AddInputToFarmerScreen({
+  final FarmerInput input;
+  const UserInputScreen({
     super.key,
     required this.userId,
     required this.input,
   });
 
   @override
-  State<AddInputToFarmerScreen> createState() => _AddInputToFarmerScreenState();
+  State<UserInputScreen> createState() => _UserInputScreenState();
 }
 
-class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
+class _UserInputScreenState extends State<UserInputScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _paybackController = TextEditingController();
+  late bool checkedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    checkedValue = widget.input.received;
+    _paybackController.text =
+        widget.input.payback != null ? widget.input.payback.toString() : "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +59,7 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Assign Input",
+          "Update Input",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -62,25 +74,33 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
         },
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: BlocBuilder<FarmerBloc, FarmerState>(
+          child: BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
-              if (state is LoadedFarmer) {
-                final farmer = state.farmer;
-
+              if (state is LoadedUser) {
                 return Form(
                   key: _formKey,
                   child: ListView(
                     children: [
                       InputItem(
-                        name: widget.input.name,
+                        name: widget.input.input.name,
                         quantity: widget.input.quantity,
-                        unit: widget.input.unit,
+                        unit: widget.input.input.unit,
                       ),
                       CustomSpaces.verticalSpace(height: 15),
+                      CheckboxListTile(
+                        title: const Text("I confirm to receive the input"),
+                        value: checkedValue,
+                        onChanged: (newValue) {
+                          setState(() {
+                            checkedValue = newValue!;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
                       CustomTextField(
-                        label: "Quantity",
+                        label: "Payback",
                         keyboardType: TextInputType.number,
-                        controller: _quantityController,
+                        controller: _paybackController,
                       ),
                       BlocBuilder<FarmerInputBloc, FarmerInputState>(
                         builder: (context, state) {
@@ -113,11 +133,12 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 context.read<FarmerInputBloc>().add(
-                                      AddFarmerInputEvent(
-                                        quantity: int.parse(
-                                            _quantityController.text.trim()),
+                                      UpdateFarmerInputEvent(
+                                        payback: double.parse(
+                                            _paybackController.text.trim()),
                                         inputId: widget.input.id,
-                                        userId: farmer.id,
+                                        received: checkedValue,
+                                        userId: widget.userId,
                                       ),
                                     );
                               }
@@ -130,7 +151,7 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
                 );
               }
 
-              if (state is FarmerStateLoading) {
+              if (state is UserStateLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
@@ -139,7 +160,9 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
               return CustomButton(
                 label: "Reload",
                 onPressed: () {
-                  context.read<FarmerBloc>().add(LoadFarmer(id: widget.userId));
+                  context
+                      .read<AuthenticationBloc>()
+                      .add(AuthenticationEventInitialize());
                 },
               );
             },

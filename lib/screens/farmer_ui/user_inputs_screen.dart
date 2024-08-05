@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_screen.dart';
+import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/screens/farmer_ui/user_input_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class InputsScreen extends StatefulWidget {
-  static Route route() {
+class UserInputsScreen extends StatelessWidget {
+  static Route route({required String userId}) {
     return MaterialPageRoute(
-      builder: (context) => const InputsScreen(),
+      builder: (context) => UserInputsScreen(
+        userId: userId,
+      ),
     );
   }
 
-  const InputsScreen({super.key});
+  final String userId;
 
-  @override
-  State<InputsScreen> createState() => _InputsScreenState();
-}
-
-class _InputsScreenState extends State<InputsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<InputBloc>().add(LoadInputs());
-  }
+  const UserInputsScreen({
+    super.key,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +30,7 @@ class _InputsScreenState extends State<InputsScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Registered Inputs",
+          "My Inputs",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -42,9 +38,9 @@ class _InputsScreenState extends State<InputsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<InputBloc, InputState>(
+        child: BlocBuilder<FarmerInputBloc, FarmerInputState>(
           builder: (context, state) {
-            if (state is LoadedInputs) {
+            if (state is LoadedFarmerInputs) {
               final inputs = state.inputs.reversed.toList();
               return inputs.isNotEmpty
                   ? ListView.builder(
@@ -53,10 +49,19 @@ class _InputsScreenState extends State<InputsScreen> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: InputItem(
-                            name: inputs[index].name,
+                            name: inputs[index].input.name,
                             quantity: inputs[index].quantity,
-                            unit: inputs[index].unit,
-                            onTap: () {},
+                            unit: inputs[index].input.unit,
+                            received: inputs[index].received,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                UserInputScreen.route(
+                                  userId: userId,
+                                  input: inputs[index],
+                                ),
+                              );
+                            },
                           ),
                         );
                       })
@@ -68,7 +73,7 @@ class _InputsScreenState extends State<InputsScreen> {
                     );
             }
 
-            if (state is InputStateLoading) {
+            if (state is FarmerInputStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -77,21 +82,12 @@ class _InputsScreenState extends State<InputsScreen> {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<InputBloc>().add(LoadInputs());
+                context.read<FarmerInputBloc>().add(
+                      LoadFarmerInputs(userId: userId),
+                    );
               },
             );
           },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: CustomColors.kPrimaryColor,
-        onPressed: () {
-          Navigator.push(context, AddInputScreen.route());
-        },
-        shape: const CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: CustomColors.kWhiteTextColor,
         ),
       ),
     );

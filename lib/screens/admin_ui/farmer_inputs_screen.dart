@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_to_farmer_screen.dart';
+import 'package:tisha_app/screens/admin_ui/choose_inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -50,8 +50,9 @@ class FarmerInputsScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: InputItem(
                             name: inputs[index].input.name,
-                            quantity: inputs[index].input.quantity,
+                            quantity: inputs[index].quantity,
                             unit: inputs[index].input.unit,
+                            received: inputs[index].received,
                             onTap: () {},
                           ),
                         );
@@ -73,7 +74,9 @@ class FarmerInputsScreen extends StatelessWidget {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<FarmerInputBloc>().add(LoadFarmerInputs());
+                context.read<FarmerInputBloc>().add(
+                      LoadFarmerInputs(userId: userId),
+                    );
               },
             );
           },
@@ -84,7 +87,7 @@ class FarmerInputsScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            AddInputToFarmerScreen.route(userId: userId),
+            ChooseInputsScreen.route(userId: userId),
           );
         },
         shape: const CircleBorder(),

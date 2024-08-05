@@ -8,20 +8,43 @@ abstract class FarmerInputEvent extends Equatable {
 }
 
 class SearchFarmerInputs extends FarmerInputEvent {
+  final String userId;
   final String query;
   const SearchFarmerInputs({
+    required this.userId,
     required this.query,
   });
 }
 
-class LoadFarmerInputs extends FarmerInputEvent {}
+class LoadFarmerInputs extends FarmerInputEvent {
+  final String userId;
+  const LoadFarmerInputs({
+    required this.userId,
+  });
+}
 
 class AddFarmerInputEvent extends FarmerInputEvent {
-  final List<String> inputs;
+  final int quantity;
+  final String inputId;
   final String userId;
 
   const AddFarmerInputEvent({
-    required this.inputs,
+    required this.quantity,
+    required this.inputId,
     required this.userId,
+  });
+}
+
+class UpdateFarmerInputEvent extends FarmerInputEvent {
+  final String userId;
+  final double payback;
+  final String inputId;
+  final bool received;
+
+  const UpdateFarmerInputEvent({
+    required this.userId,
+    required this.payback,
+    required this.inputId,
+    required this.received,
   });
 }

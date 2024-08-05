@@ -1,36 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/farmer_details_screen.dart';
-import 'package:tisha_app/screens/admin_ui/farmer_inputs_screen.dart';
+import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
+import 'package:tisha_app/screens/farmer_ui/user_details_screen.dart';
+import 'package:tisha_app/screens/farmer_ui/user_inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/menu_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class FarmerScreen extends StatefulWidget {
-  static Route route({
-    required String userId,
-  }) {
+class FarmerProfileScreen extends StatelessWidget {
+  static Route route() {
     return MaterialPageRoute(
-      builder: (context) => FarmerScreen(
-        userId: userId,
-      ),
+      builder: (context) => const FarmerProfileScreen(),
     );
   }
 
-  final String userId;
-  const FarmerScreen({
-    super.key,
-    required this.userId,
-  });
+  const FarmerProfileScreen({super.key});
 
-  @override
-  State<FarmerScreen> createState() => _FarmerScreenState();
-}
-
-class _FarmerScreenState extends State<FarmerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +27,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Farmer",
+          "Profile",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -47,12 +35,12 @@ class _FarmerScreenState extends State<FarmerScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<FarmerBloc, FarmerState>(
+        child: BlocBuilder<UserBloc, UserState>(
           buildWhen: (previous, current) =>
-              previous != current && current is LoadedFarmer,
+              previous != current && current is LoadedUser,
           builder: (context, state) {
-            if (state is LoadedFarmer) {
-              final farmer = state.farmer;
+            if (state is LoadedUser) {
+              final loggedUser = state.user;
               return ListView(
                 children: [
                   Column(
@@ -66,7 +54,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                       ),
                       CustomSpaces.verticalSpace(height: 15),
                       Text(
-                        farmer.email,
+                        loggedUser.email,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       CustomSpaces.verticalSpace(height: 15),
@@ -81,7 +69,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                           ),
                           CustomSpaces.horizontalSpace(),
                           Text(
-                            farmer.location?.name ?? "No Location",
+                            loggedUser.location?.name ?? "No Location",
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -90,27 +78,27 @@ class _FarmerScreenState extends State<FarmerScreen> {
                   ),
                   CustomSpaces.verticalSpace(height: 30),
                   MenuItem(
-                    title: "Farmer Details",
-                    subTitle: farmer.name,
+                    title: "My Details",
+                    subTitle: loggedUser.name,
                     icon: Icons.person,
                     onTap: () {
                       Navigator.push(
                         context,
-                        FarmerDetailsScreen.route(userId: farmer.id),
+                        UserDetailsScreen.route(),
                       );
                     },
                   ),
                   MenuItem(
-                    title: "Farmer Inputs",
-                    subTitle: "${farmer.inputs.length} inputs",
+                    title: "My Inputs",
+                    subTitle: "${loggedUser.inputs.length} inputs",
                     icon: Icons.water_drop,
                     onTap: () {
                       context.read<FarmerInputBloc>().add(
-                            LoadFarmerInputs(userId: farmer.id),
+                            LoadFarmerInputs(userId: loggedUser.id),
                           );
                       Navigator.push(
                         context,
-                        FarmerInputsScreen.route(userId: farmer.id),
+                        UserInputsScreen.route(userId: loggedUser.id),
                       );
                     },
                   ),
@@ -118,7 +106,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
               );
             }
 
-            if (state is FarmerStateLoading) {
+            if (state is UserStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -127,7 +115,9 @@ class _FarmerScreenState extends State<FarmerScreen> {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<FarmerBloc>().add(LoadFarmer(id: widget.userId));
+                context
+                    .read<AuthenticationBloc>()
+                    .add(AuthenticationEventInitialize());
               },
             );
           },

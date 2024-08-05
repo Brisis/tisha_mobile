@@ -5,12 +5,14 @@ class InputItem extends StatelessWidget {
   final String name;
   final int quantity;
   final String unit;
+  final bool received;
   final Function()? onTap;
   const InputItem({
     super.key,
     required this.name,
     required this.quantity,
     required this.unit,
+    this.received = false,
     this.onTap,
   });
 
@@ -20,16 +22,19 @@ class InputItem extends StatelessWidget {
       contentPadding: const EdgeInsets.all(3.0),
       shape: OutlineInputBorder(
         borderSide: BorderSide(
-          color: CustomColors.kBorderColor,
+          color:
+              received ? CustomColors.kSuccessColor : CustomColors.kBorderColor,
         ),
       ),
       onTap: onTap,
       leading: CircleAvatar(
         maxRadius: 40,
-        backgroundColor: CustomColors.kContainerBackgroundColor,
+        backgroundColor:
+            received ? CustomColors.kSuccessColor : CustomColors.kBorderColor,
         child: Icon(
-          Icons.person,
-          color: CustomColors.kIconColor,
+          Icons.water_drop,
+          color:
+              received ? CustomColors.kWhiteTextColor : CustomColors.kIconColor,
         ),
       ),
       title: Text(

@@ -10,13 +10,20 @@ import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
 class FarmerDetailsScreen extends StatefulWidget {
-  static Route route() {
+  static Route route({required String userId}) {
     return MaterialPageRoute(
-      builder: (context) => const FarmerDetailsScreen(),
+      builder: (context) => FarmerDetailsScreen(
+        userId: userId,
+      ),
     );
   }
 
-  const FarmerDetailsScreen({super.key});
+  final String userId;
+
+  const FarmerDetailsScreen({
+    super.key,
+    required this.userId,
+  });
 
   @override
   State<FarmerDetailsScreen> createState() => _FarmerDetailsScreenState();
@@ -49,7 +56,7 @@ class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "New Farmer",
+          "Farmer Details",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -68,7 +75,7 @@ class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
             child: ListView(
               children: [
                 Text(
-                  "Complete Form",
+                  "Change Details",
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 CustomSpaces.verticalSpace(height: 15),
@@ -152,31 +159,6 @@ class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
                 CustomTextField(
                   label: "Coordinates",
                   controller: _coordinatesController,
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Email Address",
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email is required';
-                    }
-
-                    return null;
-                  },
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Password",
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-
-                    return null;
-                  },
                 ),
                 BlocBuilder<FarmerBloc, FarmerState>(
                   builder: (context, state) {

@@ -8,6 +8,7 @@ class FarmerInput extends Equatable {
   final String userId;
   final bool received;
   final double? payback;
+  final int quantity;
   final Input input;
 
   const FarmerInput({
@@ -15,6 +16,7 @@ class FarmerInput extends Equatable {
     required this.userId,
     required this.received,
     this.payback,
+    required this.quantity,
     required this.input,
   });
 
@@ -27,6 +29,7 @@ class FarmerInput extends Equatable {
         payback = json["payback"] == null
             ? null
             : double.parse(json["payback"].toString()),
+        quantity = int.parse(json["quantity"].toString()),
         input = Input.fromJson(json["input"]);
 
   Map<String, dynamic> toJson() => {
@@ -34,6 +37,7 @@ class FarmerInput extends Equatable {
         "userId": userId,
         "received": received,
         "payback": payback,
+        "quantity": quantity,
         "input": input.toJson(),
       };
 
@@ -43,6 +47,7 @@ class FarmerInput extends Equatable {
         userId,
         received,
         payback,
+        quantity,
         input,
       ];
 

@@ -18,7 +18,11 @@ class FarmerInputBloc extends Bloc<FarmerInputEvent, FarmerInputState> {
     on<LoadFarmerInputs>((event, emit) async {
       emit(FarmerInputStateLoading());
       try {
-        final inputs = await inputRepository.getFarmerInputs();
+        final token = await getAuthToken();
+        final inputs = await inputRepository.getFarmerInputs(
+          token: token!,
+          userId: event.userId,
+        );
 
         emit(LoadedFarmerInputs(inputs: inputs));
       } on AppException catch (e) {
@@ -45,8 +49,40 @@ class FarmerInputBloc extends Bloc<FarmerInputEvent, FarmerInputState> {
 
         final inputs = await inputRepository.addFarmerInput(
           token: token!,
-          inputs: event.inputs,
+          inputId: event.inputId,
+          quantity: event.quantity,
           userId: event.userId,
+        );
+
+        emit(LoadedFarmerInputs(inputs: inputs));
+      } on AppException catch (e) {
+        emit(
+          FarmerInputStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          FarmerInputStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
+    on<UpdateFarmerInputEvent>((event, emit) async {
+      emit(FarmerInputStateLoading());
+      try {
+        final token = await getAuthToken();
+
+        final inputs = await inputRepository.updateFarmerInput(
+          token: token!,
+          userId: event.userId,
+          inputId: event.inputId,
+          payback: event.payback,
+          received: event.received,
         );
 
         emit(LoadedFarmerInputs(inputs: inputs));
@@ -70,7 +106,11 @@ class FarmerInputBloc extends Bloc<FarmerInputEvent, FarmerInputState> {
     on<SearchFarmerInputs>((event, emit) async {
       emit(FarmerInputStateSearchLoading());
       try {
-        final inputs = await inputRepository.getFarmerInputs();
+        final token = await getAuthToken();
+        final inputs = await inputRepository.getFarmerInputs(
+          token: token!,
+          userId: event.userId,
+        );
 
         final filtered = inputs
             .where((input) => input.input.name

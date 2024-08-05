@@ -9,20 +9,20 @@ import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class ProfileScreen extends StatefulWidget {
+class UserDetailsScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const ProfileScreen(),
+      builder: (context) => const UserDetailsScreen(),
     );
   }
 
-  const ProfileScreen({super.key});
+  const UserDetailsScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<UserDetailsScreen> createState() => _UserDetailsScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _UserDetailsScreenState extends State<UserDetailsScreen> {
   late User loggedUser;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Profile",
+          "My Details",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),

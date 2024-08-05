@@ -16,8 +16,14 @@ class InputRepository {
         .toList();
   }
 
-  Future<List<FarmerInput>> getFarmerInputs() async {
-    final response = await inputProvider.getInputs();
+  Future<List<FarmerInput>> getFarmerInputs({
+    required String token,
+    required String userId,
+  }) async {
+    final response = await inputProvider.getFarmerInputs(
+      token: token,
+      userId: userId,
+    );
 
     return (response as List<dynamic>)
         .map(
@@ -52,13 +58,37 @@ class InputRepository {
 
   Future<List<FarmerInput>> addFarmerInput({
     required String token,
-    required List<String> inputs,
+    required String inputId,
     required String userId,
+    required int quantity,
   }) async {
     final response = await inputProvider.addFarmerInput(
       token: token,
-      inputs: inputs,
+      inputId: inputId,
+      quantity: quantity,
       userId: userId,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => FarmerInput.fromJson(i),
+        )
+        .toList();
+  }
+
+  Future<List<FarmerInput>> updateFarmerInput({
+    required String token,
+    required String userId,
+    required String inputId,
+    required bool received,
+    required double payback,
+  }) async {
+    final response = await inputProvider.updateFarmerInput(
+      token: token,
+      userId: userId,
+      inputId: inputId,
+      received: received,
+      payback: payback,
     );
 
     return (response as List<dynamic>)
