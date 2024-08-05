@@ -1,3 +1,4 @@
+import 'package:tisha_app/data/models/farmer_input.dart';
 import 'package:tisha_app/data/models/input.dart';
 import 'package:tisha_app/data/repositories/input/input_provider.dart';
 
@@ -11,6 +12,16 @@ class InputRepository {
     return (response as List<dynamic>)
         .map(
           (i) => Input.fromJson(i),
+        )
+        .toList();
+  }
+
+  Future<List<FarmerInput>> getFarmerInputs() async {
+    final response = await inputProvider.getInputs();
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => FarmerInput.fromJson(i),
         )
         .toList();
   }
@@ -35,6 +46,24 @@ class InputRepository {
     return (response as List<dynamic>)
         .map(
           (i) => Input.fromJson(i),
+        )
+        .toList();
+  }
+
+  Future<List<FarmerInput>> addFarmerInput({
+    required String token,
+    required List<String> inputs,
+    required String userId,
+  }) async {
+    final response = await inputProvider.addFarmerInput(
+      token: token,
+      inputs: inputs,
+      userId: userId,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => FarmerInput.fromJson(i),
         )
         .toList();
   }

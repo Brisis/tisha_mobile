@@ -56,7 +56,7 @@ class AppLoaderScreen extends StatelessWidget {
                       ),
                     ),
                     label: Text(
-                      "Try Again",
+                      "Restart",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w600,
                           color: CustomColors.kPrimaryColor),

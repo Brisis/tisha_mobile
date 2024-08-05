@@ -3,12 +3,14 @@ import 'package:tisha_app/theme/colors.dart';
 
 class InputItem extends StatelessWidget {
   final String name;
-  final int farmers;
+  final int quantity;
+  final String unit;
   final Function()? onTap;
   const InputItem({
     super.key,
     required this.name,
-    required this.farmers,
+    required this.quantity,
+    required this.unit,
     this.onTap,
   });
 
@@ -39,7 +41,7 @@ class InputItem extends StatelessWidget {
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Text(
-          "$farmers Farmers",
+          "$quantity $unit",
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ),

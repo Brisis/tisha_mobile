@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
+import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 // import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/admin_home_screen.dart';
@@ -61,6 +63,8 @@ class _MainAppState extends State<MainApp> {
               );
 
               BlocProvider.of<FarmerBloc>(context).add(LoadFarmers());
+              BlocProvider.of<InputBloc>(context).add(LoadInputs());
+              BlocProvider.of<LocationBloc>(context).add(LoadLocations());
 
               _navigator!.pushAndRemoveUntil(
                 AdminHomeScreen.route(),

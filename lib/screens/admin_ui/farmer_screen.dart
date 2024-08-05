@@ -97,7 +97,10 @@ class _FarmerScreenState extends State<FarmerScreen> {
               subTitle: "${farmer.inputs.length} inputs",
               icon: Icons.water_drop,
               onTap: () {
-                Navigator.push(context, FarmerInputsScreen.route());
+                Navigator.push(
+                  context,
+                  FarmerInputsScreen.route(userId: widget.user.id),
+                );
               },
             ),
           ],

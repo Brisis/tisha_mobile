@@ -23,7 +23,7 @@ class Input extends Equatable {
   Input.fromJson(Map<String, dynamic> json)
       : id = json["id"],
         name = json["name"],
-        quantity = json["quantity"],
+        quantity = int.parse(json["quantity"].toString()),
         unit = json["unit"],
         locationId = json["locationId"],
         userId = json["userId"];

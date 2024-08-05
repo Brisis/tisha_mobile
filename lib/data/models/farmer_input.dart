@@ -1,36 +1,49 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:tisha_app/data/models/input.dart';
 
 class FarmerInput extends Equatable {
   final String id;
-  final String name;
-  final String? imageUrl;
+  final String userId;
+  final bool received;
+  final double? payback;
+  final Input input;
 
   const FarmerInput({
     required this.id,
-    required this.name,
-    this.imageUrl,
+    required this.userId,
+    required this.received,
+    this.payback,
+    required this.input,
   });
 
   String toRawJson() => json.encode(toJson());
 
   FarmerInput.fromJson(Map<String, dynamic> json)
       : id = json["id"],
-        name = json["name"],
-        imageUrl = json["imageUrl"] == null ? null : json["imageUrl"] as String;
+        userId = json["userId"],
+        received = json["received"],
+        payback = json["payback"] == null
+            ? null
+            : double.parse(json["payback"].toString()),
+        input = Input.fromJson(json["input"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
-        "imageUrl": imageUrl,
+        "userId": userId,
+        "received": received,
+        "payback": payback,
+        "input": input.toJson(),
       };
 
   @override
   List<Object?> get props => [
         id,
-        name,
-        imageUrl,
+        userId,
+        received,
+        payback,
+        input,
       ];
 
   @override

@@ -62,4 +62,34 @@ class InputProvider {
       // throw ExceptionHandlers.getExceptionString(e);
     }
   }
+
+  Future<dynamic> addFarmerInput({
+    required String token,
+    required List<String> inputs,
+    required String userId,
+  }) async {
+    try {
+      Map body = {
+        "inputs": inputs,
+        "userId": userId,
+      };
+      final response = await http.post(
+        Uri.parse("${AppUrls.SERVER_URL}/inputs/add-to-farmer"),
+        body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+      // throw ExceptionHandlers.getExceptionString(e);
+    }
+  }
 }

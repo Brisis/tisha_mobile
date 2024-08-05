@@ -37,13 +37,14 @@ class InputsScreen extends StatelessWidget {
               final inputs = state.inputs.reversed.toList();
               return inputs.isNotEmpty
                   ? ListView.builder(
-                      itemCount: 3,
+                      itemCount: inputs.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: InputItem(
-                            name: "Maize Seeds",
-                            farmers: 10,
+                            name: inputs[index].name,
+                            quantity: inputs[index].quantity,
+                            unit: inputs[index].unit,
                             onTap: () {},
                           ),
                         );
