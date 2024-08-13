@@ -52,53 +52,20 @@ class ApplicationProvider {
 
   Future<dynamic> addApplication({
     required String token,
-    required String name,
-    required int quantity,
-    required String unit,
-    required String locationId,
-    required String userId,
-  }) async {
-    try {
-      Map body = {
-        "name": name,
-        "quantity": quantity,
-        "unit": unit,
-        "locationId": locationId,
-        "userId": userId,
-      };
-      final response = await http.post(
-        Uri.parse("${AppUrls.SERVER_URL}/applications"),
-        body: json.encode(body),
-        headers: {
-          "Content-Type": "application/json",
-          "accept": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      return HttpHandler.returnResponse(response);
-    } on SocketException {
-      throw const FetchDataException(message: "No Internet connection");
-    } on TimeoutException {
-      throw const ApiNotRespondingException(message: "Api not responding");
-      // throw ExceptionHandlers.getExceptionString(e);
-    }
-  }
-
-  Future<dynamic> addFarmerApplication({
-    required String token,
     required String inputId,
     required String userId,
-    required int quantity,
+    required String message,
+    required double quantity,
   }) async {
     try {
       Map body = {
         "inputId": inputId,
         "quantity": quantity,
+        "message": message,
+        "userId": userId,
       };
       final response = await http.post(
-        Uri.parse("${AppUrls.SERVER_URL}/applications/add-to-farmer/$userId"),
+        Uri.parse("${AppUrls.SERVER_URL}/applications"),
         body: json.encode(body),
         headers: {
           "Content-Type": "application/json",

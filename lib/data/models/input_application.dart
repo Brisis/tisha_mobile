@@ -11,6 +11,7 @@ class InputApplication extends Equatable {
   final bool accepted;
   final String message;
   final Input input;
+  final double quantity;
 
   const InputApplication({
     required this.id,
@@ -19,6 +20,7 @@ class InputApplication extends Equatable {
     required this.accepted,
     required this.message,
     required this.input,
+    required this.quantity,
   });
 
   String toRawJson() => json.encode(toJson());
@@ -29,6 +31,7 @@ class InputApplication extends Equatable {
         createdAt = DateTime.parse(json["createdAt"].toString()),
         accepted = json["accepted"],
         message = json["message"],
+        quantity = double.parse(json["quantity"].toString()),
         input = Input.fromJson(json["input"]);
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +39,7 @@ class InputApplication extends Equatable {
         "user": user.toJson(),
         "createdAt": createdAt,
         "accepted": accepted,
+        "quantity": quantity,
         "message": message,
         "input": input.toJson(),
       };
@@ -45,6 +49,57 @@ class InputApplication extends Equatable {
         id,
         user,
         createdAt,
+        quantity,
+        accepted,
+        message,
+        input,
+      ];
+
+  @override
+  bool? get stringify => true;
+}
+
+class UserInputApplication extends Equatable {
+  final String id;
+  final DateTime createdAt;
+  final bool accepted;
+  final String message;
+  final Input input;
+  final double quantity;
+
+  const UserInputApplication({
+    required this.id,
+    required this.createdAt,
+    required this.accepted,
+    required this.message,
+    required this.input,
+    required this.quantity,
+  });
+
+  String toRawJson() => json.encode(toJson());
+
+  UserInputApplication.fromJson(Map<String, dynamic> json)
+      : id = json["id"],
+        createdAt = DateTime.parse(json["createdAt"].toString()),
+        accepted = json["accepted"],
+        message = json["message"],
+        quantity = double.parse(json["quantity"].toString()),
+        input = Input.fromJson(json["input"]);
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "createdAt": createdAt,
+        "accepted": accepted,
+        "quantity": quantity,
+        "message": message,
+        "input": input.toJson(),
+      };
+
+  @override
+  List<Object?> get props => [
+        id,
+        createdAt,
+        quantity,
         accepted,
         message,
         input,

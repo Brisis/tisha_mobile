@@ -33,37 +33,15 @@ class ApplicationRepository {
 
   Future<List<InputApplication>> addApplication({
     required String token,
-    required String name,
-    required int quantity,
-    required String unit,
-    required String locationId,
+    required String inputId,
     required String userId,
+    required String message,
+    required double quantity,
   }) async {
     final response = await applicationProvider.addApplication(
       token: token,
-      name: name,
-      quantity: quantity,
-      locationId: locationId,
-      unit: unit,
-      userId: userId,
-    );
-
-    return (response as List<dynamic>)
-        .map(
-          (i) => InputApplication.fromJson(i),
-        )
-        .toList();
-  }
-
-  Future<List<InputApplication>> addFarmerApplication({
-    required String token,
-    required String inputId,
-    required String userId,
-    required int quantity,
-  }) async {
-    final response = await applicationProvider.addFarmerApplication(
-      token: token,
       inputId: inputId,
+      message: message,
       quantity: quantity,
       userId: userId,
     );

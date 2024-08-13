@@ -37,7 +37,7 @@ class User extends Equatable {
   final List<FarmerInput> inputs;
   final Location? location;
   final List<Feedback> feedback;
-  final List<InputApplication> applications;
+  final List<UserInputApplication> applications;
   const User({
     required this.id,
     required this.name,
@@ -95,7 +95,7 @@ class User extends Equatable {
     List<FarmerInput>? inputs,
     Location? location,
     List<Feedback>? feedback,
-    List<InputApplication>? applications,
+    List<UserInputApplication>? applications,
   }) =>
       User(
         id: id,
@@ -193,7 +193,7 @@ class User extends Equatable {
         applications: json["applications"] == null
             ? []
             : (json["applications"] as List<dynamic>)
-                .map((i) => InputApplication.fromJson(i))
+                .map((i) => UserInputApplication.fromJson(i))
                 .toList(),
       );
 

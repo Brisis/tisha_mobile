@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_to_farmer_screen.dart';
+import 'package:tisha_app/screens/farmer_ui/input_application_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -68,7 +68,7 @@ class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                AddInputToFarmerScreen.route(
+                                InputApplicationScreen.route(
                                   userId: widget.userId,
                                   input: inputs[index],
                                 ),

@@ -71,9 +71,10 @@ class FarmerApplicationBloc
       try {
         final token = await getAuthToken();
 
-        final applications = await applicationRepository.addFarmerApplication(
+        final applications = await applicationRepository.addApplication(
           token: token!,
           inputId: event.inputId,
+          message: event.message,
           quantity: event.quantity,
           userId: event.userId,
         );

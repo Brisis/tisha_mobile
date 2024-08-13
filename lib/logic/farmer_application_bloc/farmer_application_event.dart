@@ -26,12 +26,14 @@ class LoadFarmerApplications extends FarmerApplicationEvent {
 }
 
 class AddFarmerApplicationEvent extends FarmerApplicationEvent {
-  final int quantity;
+  final double quantity;
+  final String message;
   final String inputId;
   final String userId;
 
   const AddFarmerApplicationEvent({
     required this.quantity,
+    required this.message,
     required this.inputId,
     required this.userId,
   });
