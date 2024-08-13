@@ -57,7 +57,7 @@ class FarmerApplicationsScreen extends StatelessWidget {
                       })
                   : Center(
                       child: Text(
-                        "Not Found",
+                        "0 Found",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     );

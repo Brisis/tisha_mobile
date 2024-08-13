@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_screen.dart';
+import 'package:tisha_app/screens/admin_ui/add_input_to_farmer_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class InputsScreen extends StatefulWidget {
-  static Route route() {
+class InputNotificationsScreen extends StatefulWidget {
+  static Route route({required String userId}) {
     return MaterialPageRoute(
-      builder: (context) => const InputsScreen(),
+      builder: (context) => InputNotificationsScreen(
+        userId: userId,
+      ),
     );
   }
 
-  const InputsScreen({super.key});
+  final String userId;
+
+  const InputNotificationsScreen({
+    super.key,
+    required this.userId,
+  });
 
   @override
-  State<InputsScreen> createState() => _InputsScreenState();
+  State<InputNotificationsScreen> createState() =>
+      _InputNotificationsScreenState();
 }
 
-class _InputsScreenState extends State<InputsScreen> {
+class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
   @override
   void initState() {
     super.initState();
@@ -34,7 +42,7 @@ class _InputsScreenState extends State<InputsScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Registered Inputs",
+          "Apply for Inputs",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -57,13 +65,21 @@ class _InputsScreenState extends State<InputsScreen> {
                             quantity: inputs[index].quantity,
                             unit: inputs[index].unit,
                             date: inputs[index].createdAt,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                AddInputToFarmerScreen.route(
+                                  userId: widget.userId,
+                                  input: inputs[index],
+                                ),
+                              );
+                            },
                           ),
                         );
                       })
                   : Center(
                       child: Text(
-                        "0 Found",
+                        "Not Found",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     );
@@ -82,17 +98,6 @@ class _InputsScreenState extends State<InputsScreen> {
               },
             );
           },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: CustomColors.kPrimaryColor,
-        onPressed: () {
-          Navigator.push(context, AddInputScreen.route());
-        },
-        shape: const CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: CustomColors.kWhiteTextColor,
         ),
       ),
     );

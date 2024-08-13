@@ -6,6 +6,7 @@ import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/farmers_screen.dart';
+import 'package:tisha_app/screens/admin_ui/input_applications_screen.dart';
 import 'package:tisha_app/screens/admin_ui/inputs_screen.dart';
 import 'package:tisha_app/screens/admin_ui/locations_screen.dart';
 import 'package:tisha_app/screens/feedback_forum_screen.dart';
@@ -121,7 +122,7 @@ class AdminHomeScreen extends StatelessWidget {
                     subTitle: "${state.applications.length} applications",
                     icon: Icons.notes,
                     onTap: () {
-                      Navigator.push(context, InputsScreen.route());
+                      Navigator.push(context, InputApplicationsScreen.route());
                     },
                   );
                 }

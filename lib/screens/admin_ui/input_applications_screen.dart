@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_screen.dart';
+import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
+import 'package:tisha_app/screens/widgets/application_item.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
-import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class InputsScreen extends StatefulWidget {
+class InputApplicationsScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const InputsScreen(),
+      builder: (context) => const InputApplicationsScreen(),
     );
   }
 
-  const InputsScreen({super.key});
+  const InputApplicationsScreen({super.key});
 
   @override
-  State<InputsScreen> createState() => _InputsScreenState();
+  State<InputApplicationsScreen> createState() =>
+      _InputApplicationsScreenState();
 }
 
-class _InputsScreenState extends State<InputsScreen> {
+class _InputApplicationsScreenState extends State<InputApplicationsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<InputBloc>().add(LoadInputs());
+    context.read<FarmerApplicationBloc>().add(LoadApplications());
   }
 
   @override
@@ -34,7 +34,7 @@ class _InputsScreenState extends State<InputsScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Registered Inputs",
+          "Input Applications",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -42,21 +42,20 @@ class _InputsScreenState extends State<InputsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<InputBloc, InputState>(
+        child: BlocBuilder<FarmerApplicationBloc, FarmerApplicationState>(
           builder: (context, state) {
-            if (state is LoadedInputs) {
-              final inputs = state.inputs.reversed.toList();
-              return inputs.isNotEmpty
+            if (state is LoadedApplications) {
+              final applications = state.applications.reversed.toList();
+              return applications.isNotEmpty
                   ? ListView.builder(
-                      itemCount: inputs.length,
+                      itemCount: applications.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: InputItem(
-                            name: inputs[index].name,
-                            quantity: inputs[index].quantity,
-                            unit: inputs[index].unit,
-                            date: inputs[index].createdAt,
+                          child: ApplicationItem(
+                            farmer: applications[index].user,
+                            input: applications[index].input,
+                            date: applications[index].createdAt,
                             onTap: () {},
                           ),
                         );
@@ -69,7 +68,7 @@ class _InputsScreenState extends State<InputsScreen> {
                     );
             }
 
-            if (state is InputStateLoading) {
+            if (state is FarmerApplicationStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -78,21 +77,10 @@ class _InputsScreenState extends State<InputsScreen> {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<InputBloc>().add(LoadInputs());
+                context.read<FarmerApplicationBloc>().add(LoadApplications());
               },
             );
           },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: CustomColors.kPrimaryColor,
-        onPressed: () {
-          Navigator.push(context, AddInputScreen.route());
-        },
-        shape: const CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: CustomColors.kWhiteTextColor,
         ),
       ),
     );

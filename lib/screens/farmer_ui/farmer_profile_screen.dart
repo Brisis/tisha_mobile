@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
+import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
+import 'package:tisha_app/screens/farmer_ui/input_notifications_screen.dart';
 import 'package:tisha_app/screens/farmer_ui/user_details_screen.dart';
 import 'package:tisha_app/screens/farmer_ui/user_inputs_screen.dart';
+import 'package:tisha_app/screens/feedback_forum_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/menu_item.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -79,12 +83,43 @@ class FarmerProfileScreen extends StatelessWidget {
                   CustomSpaces.verticalSpace(height: 30),
                   MenuItem(
                     title: "My Details",
-                    subTitle: loggedUser.name,
+                    subTitle: "${loggedUser.name} ${loggedUser.surname}",
                     icon: Icons.person,
                     onTap: () {
                       Navigator.push(
                         context,
                         UserDetailsScreen.route(),
+                      );
+                    },
+                  ),
+                  BlocBuilder<InputBloc, InputState>(
+                    buildWhen: (previous, current) =>
+                        previous != current && current is LoadedInputs,
+                    builder: (context, state) {
+                      if (state is LoadedInputs) {
+                        return MenuItem(
+                          title: "Input Notifications",
+                          subTitle: "${state.inputs.length} added inputs",
+                          icon: Icons.notifications,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                InputNotificationsScreen.route(
+                                    userId: loggedUser.id));
+                          },
+                        );
+                      }
+
+                      if (state is InputStateLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return CustomButton(
+                        label: "Reload",
+                        onPressed: () {
+                          context.read<InputBloc>().add(LoadInputs());
+                        },
                       );
                     },
                   ),
@@ -99,6 +134,35 @@ class FarmerProfileScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         UserInputsScreen.route(userId: loggedUser.id),
+                      );
+                    },
+                  ),
+                  BlocBuilder<FeedbackBloc, FeedbackState>(
+                    buildWhen: (previous, current) =>
+                        previous != current && current is LoadedFeedbacks,
+                    builder: (context, state) {
+                      if (state is LoadedFeedbacks) {
+                        return MenuItem(
+                          title: "Farmer's Forum",
+                          subTitle: "${state.feedbacks.length} posts",
+                          icon: Icons.forum,
+                          onTap: () {
+                            Navigator.push(
+                                context, FeedbackForumScreen.route());
+                          },
+                        );
+                      }
+
+                      if (state is FeedbackStateLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return CustomButton(
+                        label: "Reload",
+                        onPressed: () {
+                          context.read<FeedbackBloc>().add(LoadFeedbacks());
+                        },
                       );
                     },
                   ),

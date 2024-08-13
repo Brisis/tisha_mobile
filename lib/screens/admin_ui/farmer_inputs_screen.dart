@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/choose_inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -60,7 +59,7 @@ class FarmerInputsScreen extends StatelessWidget {
                       })
                   : Center(
                       child: Text(
-                        "Not Found",
+                        "0 Found",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     );
@@ -81,20 +80,6 @@ class FarmerInputsScreen extends StatelessWidget {
               },
             );
           },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: CustomColors.kPrimaryColor,
-        onPressed: () {
-          Navigator.push(
-            context,
-            ChooseInputsScreen.route(userId: userId),
-          );
-        },
-        shape: const CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: CustomColors.kWhiteTextColor,
         ),
       ),
     );

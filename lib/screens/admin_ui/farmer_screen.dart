@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/screens/admin_ui/farmer_applications_screen.dart';
 import 'package:tisha_app/screens/admin_ui/farmer_details_screen.dart';
 import 'package:tisha_app/screens/admin_ui/farmer_inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
@@ -91,7 +92,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                   CustomSpaces.verticalSpace(height: 30),
                   MenuItem(
                     title: "Farmer Details",
-                    subTitle: farmer.name,
+                    subTitle: "${farmer.name} ${farmer.surname}",
                     icon: Icons.person,
                     onTap: () {
                       Navigator.push(
@@ -110,7 +111,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                           );
                       Navigator.push(
                         context,
-                        FarmerInputsScreen.route(userId: farmer.id),
+                        FarmerApplicationsScreen.route(userId: farmer.id),
                       );
                     },
                   ),

@@ -63,7 +63,7 @@ class _FeedbackForumScreenState extends State<FeedbackForumScreen> {
                       })
                   : Center(
                       child: Text(
-                        "O posts found",
+                        "0 posts found",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     );
