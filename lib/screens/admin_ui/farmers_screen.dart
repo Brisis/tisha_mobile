@@ -55,7 +55,8 @@ class _FarmersScreenState extends State<FarmersScreen> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: UserItem(
-                            name: farmers[index].name,
+                            name:
+                                "${farmers[index].name} ${farmers[index].surname}",
                             inputs: farmers[index].inputs.length,
                             onTap: () {
                               context.read<FarmerBloc>().add(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/models/enums.dart';
 import 'package:tisha_app/data/models/location.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
+import 'package:tisha_app/screens/widgets/custom_dropdown.dart';
 import 'package:tisha_app/screens/widgets/custom_text_field.dart';
 import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -28,10 +30,38 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
+  final TextEditingController _livestockNumberController =
+      TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nationalIdController = TextEditingController();
+
   final TextEditingController _coordinatesController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  String? selectedFarmerType;
+  String? selectedOwnership;
+  String? selectedCropType;
+  String? selectedLivestock;
+  String? selectedGender;
+
+  DateTime? selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1930),
+        lastDate: DateTime(2030));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -68,22 +98,106 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
             child: ListView(
               children: [
                 Text(
-                  "Complete Form",
-                  style: Theme.of(context).textTheme.displayLarge,
+                  "Farmer Details",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 CustomSpaces.verticalSpace(height: 15),
                 CustomTextField(
-                  label: "Full name",
+                  label: "First name",
                   controller: _nameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Name is required';
+                      return 'Firstname is required';
                     }
 
                     return null;
                   },
                 ),
                 CustomSpaces.verticalSpace(height: 15),
+                CustomTextField(
+                  label: "Surname",
+                  controller: _surnameController,
+                ),
+                CustomSpaces.verticalSpace(height: 15),
+                CustomTextField(
+                  label: "National ID",
+                  controller: _nationalIdController,
+                ),
+                CustomSpaces.verticalSpace(height: 15),
+                ListTile(
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: CustomColors.kBorderColor,
+                    ),
+                  ),
+                  onTap: () => _selectDate(context),
+                  title: Text(
+                    "Date of Birth",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      selectedDate != null
+                          ? "${selectedDate!.toLocal()}".split(' ')[0]
+                          : "Select Date",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  leading: Icon(
+                    Icons.date_range,
+                    color: CustomColors.kIconColor,
+                  ),
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: Gender.values.map((value) => value.name).toList(),
+                  hintText: "Gender",
+                  selectedItem: selectedGender,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGender = value!;
+                    });
+                  },
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomTextField(
+                  label: "Phone number",
+                  keyboardType: TextInputType.phone,
+                  controller: _phoneNumberController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Phone number is required';
+                    }
+
+                    return null;
+                  },
+                ),
+                CustomSpaces.verticalSpace(height: 15),
+                CustomTextField(
+                  label: "Physical Address",
+                  keyboardType: TextInputType.streetAddress,
+                  controller: _addressController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Address is required';
+                    }
+
+                    return null;
+                  },
+                ),
+                CustomSpaces.verticalSpace(height: 30),
+                Text(
+                  "Farm Details",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                CustomSpaces.verticalSpace(),
                 CustomTextField(
                   label: "Farm size (h.a)",
                   keyboardType: TextInputType.number,
@@ -95,6 +209,57 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
 
                     return null;
                   },
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: OwnerShip.values.map((value) => value.name).toList(),
+                  hintText: "Ownership",
+                  selectedItem: selectedOwnership,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOwnership = value!;
+                    });
+                  },
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: FarmerType.values.map((value) => value.name).toList(),
+                  hintText: "Farmer Type",
+                  selectedItem: selectedFarmerType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFarmerType = value;
+                    });
+                  },
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: CropType.values.map((value) => value.name).toList(),
+                  hintText: "Crop Type",
+                  selectedItem: selectedCropType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCropType = value!;
+                    });
+                  },
+                ),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items:
+                      LiveStockType.values.map((value) => value.name).toList(),
+                  hintText: "Livestock Type",
+                  selectedItem: selectedLivestock,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedLivestock = value!;
+                    });
+                  },
+                ),
+                CustomSpaces.verticalSpace(height: 15),
+                CustomTextField(
+                  label: "Livestock Number",
+                  keyboardType: TextInputType.number,
+                  controller: _livestockNumberController,
                 ),
                 CustomSpaces.verticalSpace(height: 15),
                 Row(
@@ -115,7 +280,7 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
                             }
 
                             return locations.isNotEmpty
-                                ? CustomDropDown(
+                                ? SearchableDropDown(
                                     initialText: selectedLocation != null
                                         ? getInitial(selectedLocation!)
                                         : null,
@@ -152,6 +317,14 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
                 CustomTextField(
                   label: "Coordinates",
                   controller: _coordinatesController,
+                ),
+                CustomSpaces.verticalSpace(height: 30),
+                Text(
+                  "Login Details",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 CustomSpaces.verticalSpace(height: 15),
                 CustomTextField(
@@ -210,11 +383,30 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
                             context.read<FarmerBloc>().add(
                                   AddFarmerEvent(
                                     name: _nameController.text.trim(),
+                                    surname: _surnameController.text.trim(),
+                                    dob: selectedDate,
+                                    gender: selectedGender,
+                                    phone: _phoneNumberController.text.trim(),
+                                    address: _addressController.text.trim(),
+                                    nationalId:
+                                        _nationalIdController.text.trim(),
                                     farmSize: double.parse(
                                         _sizeController.text.trim()),
                                     coordinates:
                                         _coordinatesController.text.trim(),
                                     locationId: selectedLocation!.id,
+                                    landOwnership: selectedOwnership,
+                                    farmerType: selectedFarmerType,
+                                    cropType: selectedCropType,
+                                    livestockType: selectedLivestock,
+                                    livestockNumber: _livestockNumberController
+                                            .text
+                                            .trim()
+                                            .isNotEmpty
+                                        ? int.parse(_livestockNumberController
+                                            .text
+                                            .trim())
+                                        : null,
                                     email: _emailController.text.trim(),
                                     password: _passwordController.text.trim(),
                                   ),

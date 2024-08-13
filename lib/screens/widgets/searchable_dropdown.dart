@@ -2,12 +2,12 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class CustomDropDown extends StatelessWidget {
+class SearchableDropDown extends StatelessWidget {
   final List<String> items;
   final String labelText;
   final String? initialText;
   final dynamic Function(String?)? onChanged;
-  const CustomDropDown({
+  const SearchableDropDown({
     super.key,
     required this.items,
     required this.labelText,

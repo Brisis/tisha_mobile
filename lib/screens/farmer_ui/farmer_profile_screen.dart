@@ -48,7 +48,7 @@ class FarmerProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.account_box_outlined,
+                        Icons.account_circle_rounded,
                         color: CustomColors.kIconColor,
                         size: 80,
                       ),

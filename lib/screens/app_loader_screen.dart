@@ -70,11 +70,19 @@ class AppLoaderScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  "Loading...",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                Center(
+                  child: Image.asset(
+                    "assets/logo.png",
+                    width: 200,
+                    height: 200,
+                  ),
                 ),
+                CustomSpaces.verticalSpace(height: 15),
+                Center(
+                  child: CircularProgressIndicator(
+                    color: CustomColors.kPrimaryColor,
+                  ),
+                )
               ],
             );
           },

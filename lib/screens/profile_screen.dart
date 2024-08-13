@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.account_box_outlined,
+                      Icons.account_circle_rounded,
                       color: CustomColors.kIconColor,
                       size: 80,
                     ),
@@ -125,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       )
                     : const SizedBox.shrink(),
                 CustomSpaces.verticalSpace(height: 15),
-                CustomDropDown(
+                SearchableDropDown(
                   items: [],
                   labelText: "Choose Location",
                 ),

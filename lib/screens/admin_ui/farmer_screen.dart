@@ -96,12 +96,26 @@ class _FarmerScreenState extends State<FarmerScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        FarmerDetailsScreen.route(userId: farmer.id),
+                        FarmerDetailsScreen.route(farmer: farmer),
                       );
                     },
                   ),
                   MenuItem(
-                    title: "Farmer Inputs",
+                    title: "Input Applications",
+                    subTitle: "${farmer.applications.length} applications",
+                    icon: Icons.notes_rounded,
+                    onTap: () {
+                      context.read<FarmerInputBloc>().add(
+                            LoadFarmerInputs(userId: farmer.id),
+                          );
+                      Navigator.push(
+                        context,
+                        FarmerInputsScreen.route(userId: farmer.id),
+                      );
+                    },
+                  ),
+                  MenuItem(
+                    title: "Assigned Inputs",
                     subTitle: "${farmer.inputs.length} inputs",
                     icon: Icons.water_drop,
                     onTap: () {

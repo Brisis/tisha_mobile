@@ -14,6 +14,7 @@ import 'package:tisha_app/screens/common/app_repositories.dart';
 import 'package:tisha_app/screens/farmer_ui/farmer_profile_screen.dart';
 import 'package:tisha_app/screens/welcome_screen.dart';
 import 'package:tisha_app/theme/typography.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,8 +46,8 @@ class _MainAppState extends State<MainApp> {
       navigatorKey: navigatorKey,
       title: 'Tisha App',
       theme: ThemeData(
-        fontFamily: "Proxima",
-        textTheme: CustomTypography.textTheme,
+        textTheme: GoogleFonts.openSansTextTheme(CustomTypography.textTheme)
+            .copyWith(),
       ),
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(

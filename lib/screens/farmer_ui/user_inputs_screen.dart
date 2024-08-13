@@ -52,6 +52,7 @@ class UserInputsScreen extends StatelessWidget {
                             name: inputs[index].input.name,
                             quantity: inputs[index].quantity,
                             unit: inputs[index].input.unit,
+                            date: inputs[index].createdAt,
                             received: inputs[index].received,
                             onTap: () {
                               Navigator.push(

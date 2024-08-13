@@ -63,6 +63,7 @@ class _ChooseInputsScreenState extends State<ChooseInputsScreen> {
                             name: inputs[index].name,
                             quantity: inputs[index].quantity,
                             unit: inputs[index].unit,
+                            date: inputs[index].createdAt,
                             onTap: () {
                               Navigator.push(
                                 context,

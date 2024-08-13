@@ -75,6 +75,7 @@ class _AddInputToFarmerScreenState extends State<AddInputToFarmerScreen> {
                         name: widget.input.name,
                         quantity: widget.input.quantity,
                         unit: widget.input.unit,
+                        date: widget.input.createdAt,
                       ),
                       CustomSpaces.verticalSpace(height: 15),
                       CustomTextField(

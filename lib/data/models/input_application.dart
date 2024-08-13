@@ -2,57 +2,51 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:tisha_app/data/models/input.dart';
+import 'package:tisha_app/data/models/user.dart';
 
-class FarmerInput extends Equatable {
+class InputApplication extends Equatable {
   final String id;
   final DateTime createdAt;
-  final String userId;
-  final bool received;
-  final double? payback;
-  final int quantity;
+  final User user;
+  final bool accepted;
+  final String message;
   final Input input;
 
-  const FarmerInput({
+  const InputApplication({
     required this.id,
+    required this.user,
     required this.createdAt,
-    required this.userId,
-    required this.received,
-    this.payback,
-    required this.quantity,
+    required this.accepted,
+    required this.message,
     required this.input,
   });
 
   String toRawJson() => json.encode(toJson());
 
-  FarmerInput.fromJson(Map<String, dynamic> json)
+  InputApplication.fromJson(Map<String, dynamic> json)
       : id = json["id"],
+        user = User.fromJson(json["user"]),
         createdAt = DateTime.parse(json["createdAt"].toString()),
-        userId = json["userId"],
-        received = json["received"],
-        payback = json["payback"] == null
-            ? null
-            : double.parse(json["payback"].toString()),
-        quantity = int.parse(json["quantity"].toString()),
+        accepted = json["accepted"],
+        message = json["message"],
         input = Input.fromJson(json["input"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "user": user.toJson(),
         "createdAt": createdAt,
-        "userId": userId,
-        "received": received,
-        "payback": payback,
-        "quantity": quantity,
+        "accepted": accepted,
+        "message": message,
         "input": input.toJson(),
       };
 
   @override
   List<Object?> get props => [
         id,
+        user,
         createdAt,
-        userId,
-        received,
-        payback,
-        quantity,
+        accepted,
+        message,
         input,
       ];
 

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/farmers_screen.dart';
 import 'package:tisha_app/screens/admin_ui/inputs_screen.dart';
 import 'package:tisha_app/screens/admin_ui/locations_screen.dart';
+import 'package:tisha_app/screens/feedback_forum_screen.dart';
 import 'package:tisha_app/screens/profile_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/menu_item.dart';
@@ -40,7 +43,7 @@ class AdminHomeScreen extends StatelessWidget {
               Navigator.push(context, ProfileScreen.route());
             },
             icon: Icon(
-              Icons.account_box_outlined,
+              Icons.account_circle_rounded,
               color: CustomColors.kIconColor,
             ),
           ),
@@ -108,6 +111,36 @@ class AdminHomeScreen extends StatelessWidget {
                 );
               },
             ),
+            BlocBuilder<FarmerApplicationBloc, FarmerApplicationState>(
+              buildWhen: (previous, current) =>
+                  previous != current && current is LoadedApplications,
+              builder: (context, state) {
+                if (state is LoadedApplications) {
+                  return MenuItem(
+                    title: "Input Applications",
+                    subTitle: "${state.applications.length} applications",
+                    icon: Icons.notes,
+                    onTap: () {
+                      Navigator.push(context, InputsScreen.route());
+                    },
+                  );
+                }
+
+                if (state is FarmerApplicationStateLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return CustomButton(
+                  label: "Reload",
+                  onPressed: () {
+                    context
+                        .read<FarmerApplicationBloc>()
+                        .add(LoadApplications());
+                  },
+                );
+              },
+            ),
             BlocBuilder<LocationBloc, LocationState>(
               buildWhen: (previous, current) =>
                   previous != current && current is LoadedLocations,
@@ -132,6 +165,34 @@ class AdminHomeScreen extends StatelessWidget {
                   label: "Reload",
                   onPressed: () {
                     context.read<LocationBloc>().add(LoadLocations());
+                  },
+                );
+              },
+            ),
+            BlocBuilder<FeedbackBloc, FeedbackState>(
+              buildWhen: (previous, current) =>
+                  previous != current && current is LoadedFeedbacks,
+              builder: (context, state) {
+                if (state is LoadedFeedbacks) {
+                  return MenuItem(
+                    title: "Farmer's Forum",
+                    subTitle: "${state.feedbacks.length} posts",
+                    icon: Icons.forum,
+                    onTap: () {
+                      Navigator.push(context, FeedbackForumScreen.route());
+                    },
+                  );
+                }
+
+                if (state is FeedbackStateLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return CustomButton(
+                  label: "Reload",
+                  onPressed: () {
+                    context.read<FeedbackBloc>().add(LoadFeedbacks());
                   },
                 );
               },

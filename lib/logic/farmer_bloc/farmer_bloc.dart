@@ -50,6 +50,20 @@ class FarmerBloc extends Bloc<FarmerEvent, FarmerState> {
         final farmers = await farmerRepository.addFarmer(
           token: token!,
           name: event.name,
+          surname: event.surname,
+          dob: event.dob,
+          age: event.dob != null
+              ? (DateTime.now().year - event.dob!.year)
+              : null,
+          gender: event.gender,
+          phone: event.phone,
+          address: event.address,
+          nationalId: event.nationalId,
+          landOwnership: event.landOwnership,
+          farmerType: event.farmerType,
+          cropType: event.cropType,
+          livestockType: event.livestockType,
+          livestockNumber: event.livestockNumber,
           farmSize: event.farmSize,
           locationId: event.locationId,
           coordinates: event.coordinates,

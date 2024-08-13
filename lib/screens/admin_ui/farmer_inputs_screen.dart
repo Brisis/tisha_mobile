@@ -30,7 +30,7 @@ class FarmerInputsScreen extends StatelessWidget {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Registered Inputs",
+          "Assigned Inputs",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -53,6 +53,7 @@ class FarmerInputsScreen extends StatelessWidget {
                             quantity: inputs[index].quantity,
                             unit: inputs[index].input.unit,
                             received: inputs[index].received,
+                            date: inputs[index].createdAt,
                             onTap: () {},
                           ),
                         );

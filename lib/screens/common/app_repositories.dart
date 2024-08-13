@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/repositories/application/application_provider.dart';
+import 'package:tisha_app/data/repositories/application/application_repository.dart';
 import 'package:tisha_app/data/repositories/authentication/authentication_provider.dart';
 import 'package:tisha_app/data/repositories/authentication/authentication_repository.dart';
+import 'package:tisha_app/data/repositories/feedback/feedback_provider.dart';
+import 'package:tisha_app/data/repositories/feedback/feedback_repository.dart';
 import 'package:tisha_app/data/repositories/location/location_provider.dart';
 import 'package:tisha_app/data/repositories/location/location_repository.dart';
 import 'package:tisha_app/data/repositories/input/input_provider.dart';
@@ -45,6 +49,16 @@ class AppRepositories extends StatelessWidget {
         RepositoryProvider(
           create: (context) => FarmerRepository(
             farmerProvider: FarmerProvider(),
+          ),
+        ),
+        RepositoryProvider(
+          create: (context) => ApplicationRepository(
+            applicationProvider: ApplicationProvider(),
+          ),
+        ),
+        RepositoryProvider(
+          create: (context) => FeedbackRepository(
+            feedbackProvider: FeedbackProvider(),
           ),
         ),
       ],

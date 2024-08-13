@@ -115,7 +115,7 @@ class _AddInputScreenState extends State<AddInputScreen> {
                             }
 
                             return locations.isNotEmpty
-                                ? CustomDropDown(
+                                ? SearchableDropDown(
                                     initialText: selectedLocation != null
                                         ? getInitial(selectedLocation!)
                                         : null,

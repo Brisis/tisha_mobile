@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 class Input extends Equatable {
   final String id;
+  final DateTime createdAt;
   final String name;
   final int quantity;
   final String unit;
@@ -11,6 +12,7 @@ class Input extends Equatable {
   final String userId;
   const Input({
     required this.id,
+    required this.createdAt,
     required this.name,
     required this.quantity,
     required this.unit,
@@ -22,6 +24,7 @@ class Input extends Equatable {
 
   Input.fromJson(Map<String, dynamic> json)
       : id = json["id"],
+        createdAt = DateTime.parse(json["createdAt"].toString()),
         name = json["name"],
         quantity = int.parse(json["quantity"].toString()),
         unit = json["unit"],
@@ -30,6 +33,7 @@ class Input extends Equatable {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "createdAt": createdAt,
         "name": name,
         "quantity": quantity,
         "unit": unit,
@@ -40,6 +44,7 @@ class Input extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        createdAt,
         name,
         quantity,
         unit,

@@ -1,52 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/data/models/location.dart';
-import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
-import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
-import 'package:tisha_app/screens/widgets/custom_button.dart';
-import 'package:tisha_app/screens/widgets/custom_text_field.dart';
-import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
+import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class FarmerDetailsScreen extends StatefulWidget {
-  static Route route({required String userId}) {
+class FarmerDetailsScreen extends StatelessWidget {
+  static Route route({required User farmer}) {
     return MaterialPageRoute(
       builder: (context) => FarmerDetailsScreen(
-        userId: userId,
+        farmer: farmer,
       ),
     );
   }
 
-  final String userId;
+  final User farmer;
 
   const FarmerDetailsScreen({
     super.key,
-    required this.userId,
+    required this.farmer,
   });
-
-  @override
-  State<FarmerDetailsScreen> createState() => _FarmerDetailsScreenState();
-}
-
-class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
-  late Location? selectedLocation;
-  List<Location> locations = [];
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _sizeController = TextEditingController();
-  final TextEditingController _coordinatesController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    locations = context.read<LocationBloc>().state.locations;
-
-    selectedLocation = null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,154 +33,318 @@ class _FarmerDetailsScreenState extends State<FarmerDetailsScreen> {
               ),
         ),
       ),
-      body: BlocListener<FarmerBloc, FarmerState>(
-        listener: (context, state) {
-          if (state is LoadedFarmers) {
-            Navigator.pop(context);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ListView(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Change Details",
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Full name",
-                  controller: _nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Name is required';
-                    }
-
-                    return null;
-                  },
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Farm size (h.a)",
-                  keyboardType: TextInputType.number,
-                  controller: _sizeController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Farm size is required';
-                    }
-
-                    return null;
-                  },
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                Row(
-                  children: [
-                    Expanded(
-                      child: BlocBuilder<LocationBloc, LocationState>(
-                        builder: (context, state) {
-                          if (state is LoadedLocations) {
-                            final locations = state.locations;
-                            List<String> convertedLocations = locations
-                                .map((Location location) =>
-                                    "${location.name} (${location.city})")
-                                .toList();
-                            String getInitial(Location chosen) {
-                              return convertedLocations.firstWhere((location) =>
-                                  location ==
-                                  "${chosen.name} (${chosen.city})");
-                            }
-
-                            return locations.isNotEmpty
-                                ? CustomDropDown(
-                                    initialText: selectedLocation != null
-                                        ? getInitial(selectedLocation!)
-                                        : null,
-                                    labelText: "Farm location",
-                                    items: convertedLocations,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedLocation = locations.firstWhere(
-                                            (location) =>
-                                                "${location.name} (${location.city})" ==
-                                                value);
-                                      });
-                                    },
-                                  )
-                                : const Text("No locations");
-                          }
-
-                          return Center(
-                            child: SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: CircularProgressIndicator(
-                                color: CustomColors.kPrimaryColor,
-                                strokeWidth: 3,
-                              ),
-                            ),
-                          );
-                        },
+                  "Name:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
                       ),
-                    ),
-                  ],
                 ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Coordinates",
-                  controller: _coordinatesController,
-                ),
-                BlocBuilder<FarmerBloc, FarmerState>(
-                  builder: (context, state) {
-                    if (state is FarmerStateError) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Text(
-                          state.message!.message!,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: CustomColors.kWarningColor,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-                CustomSpaces.verticalSpace(height: 30),
-                BlocBuilder<FarmerBloc, FarmerState>(
-                  builder: (context, state) {
-                    if (state is FarmerStateLoading) {
-                      return const CustomButton();
-                    }
-                    return CustomButton(
-                      label: "Submit",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (selectedLocation != null) {
-                            context.read<FarmerBloc>().add(
-                                  AddFarmerEvent(
-                                    name: _nameController.text.trim(),
-                                    farmSize: double.parse(
-                                        _sizeController.text.trim()),
-                                    coordinates:
-                                        _coordinatesController.text.trim(),
-                                    locationId: selectedLocation!.id,
-                                    email: _emailController.text.trim(),
-                                    password: _passwordController.text.trim(),
-                                  ),
-                                );
-                          }
-                        }
-                      },
-                    );
-                  },
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.name} ${farmer.surname}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
               ],
             ),
-          ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "D.O.B:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.dob?.toIso8601String().substring(0, 10)}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Age:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.age}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Gender:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.gender?.name}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Phone:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.phone}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Physical Address:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.address}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "National ID:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.nationalId}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 15),
+            Text(
+              "Farm Details",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: CustomColors.kBoldTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Farm Size:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.farmSize}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Location:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.location?.name}, ${farmer.location?.city}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Coordinates:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.coordinates}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Land Ownership:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.landOwnership?.name}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Farmer Type:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.farmerType?.name}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Crop Type:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.cropType?.name}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Livestock Type:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.livestockType?.name}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            CustomSpaces.verticalSpace(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Livestock Number:",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: CustomColors.kBoldTextColor,
+                      ),
+                ),
+                CustomSpaces.horizontalSpace(),
+                Expanded(
+                  child: Text(
+                    "${farmer.livestockNumber}",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/repositories/application/application_repository.dart';
 import 'package:tisha_app/data/repositories/farmer/farmer_repository.dart';
+import 'package:tisha_app/data/repositories/feedback/feedback_repository.dart';
 import 'package:tisha_app/data/repositories/input/input_repository.dart';
 import 'package:tisha_app/data/repositories/location/location_repository.dart';
 import 'package:tisha_app/data/repositories/user/user_repository.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/data/repositories/authentication/authentication_repository.dart';
+import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
@@ -59,6 +63,20 @@ class AppBlocs extends StatelessWidget {
           create: (context) => FarmerBloc(
             farmerRepository: RepositoryProvider.of<FarmerRepository>(context),
           ),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => FarmerApplicationBloc(
+            applicationRepository:
+                RepositoryProvider.of<ApplicationRepository>(context),
+          )..add(LoadApplications()),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => FeedbackBloc(
+            feedbackRepository:
+                RepositoryProvider.of<FeedbackRepository>(context),
+          )..add(LoadFeedbacks()),
           lazy: false,
         ),
       ],

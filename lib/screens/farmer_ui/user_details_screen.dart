@@ -125,7 +125,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       )
                     : const SizedBox.shrink(),
                 CustomSpaces.verticalSpace(height: 15),
-                CustomDropDown(
+                SearchableDropDown(
                   items: [],
                   labelText: "Choose Location",
                 ),

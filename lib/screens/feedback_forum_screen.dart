@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/add_input_screen.dart';
+import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
+import 'package:tisha_app/screens/add_feedback_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
-import 'package:tisha_app/screens/widgets/input_item.dart';
+import 'package:tisha_app/screens/widgets/feedback_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class InputsScreen extends StatefulWidget {
+class FeedbackForumScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const InputsScreen(),
+      builder: (context) => const FeedbackForumScreen(),
     );
   }
 
-  const InputsScreen({super.key});
+  const FeedbackForumScreen({super.key});
 
   @override
-  State<InputsScreen> createState() => _InputsScreenState();
+  State<FeedbackForumScreen> createState() => _FeedbackForumScreenState();
 }
 
-class _InputsScreenState extends State<InputsScreen> {
+class _FeedbackForumScreenState extends State<FeedbackForumScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<InputBloc>().add(LoadInputs());
+    context.read<FeedbackBloc>().add(LoadFeedbacks());
   }
 
   @override
@@ -34,7 +34,7 @@ class _InputsScreenState extends State<InputsScreen> {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Registered Inputs",
+          "Farmer's Forum",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -42,34 +42,34 @@ class _InputsScreenState extends State<InputsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<InputBloc, InputState>(
+        child: BlocBuilder<FeedbackBloc, FeedbackState>(
           builder: (context, state) {
-            if (state is LoadedInputs) {
-              final inputs = state.inputs.reversed.toList();
-              return inputs.isNotEmpty
+            if (state is LoadedFeedbacks) {
+              final feedbacks = state.feedbacks;
+
+              return feedbacks.isNotEmpty
                   ? ListView.builder(
-                      itemCount: inputs.length,
+                      itemCount: feedbacks.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: InputItem(
-                            name: inputs[index].name,
-                            quantity: inputs[index].quantity,
-                            unit: inputs[index].unit,
-                            date: inputs[index].createdAt,
+                          child: FeedbackItem(
+                            farmer: feedbacks[index].user,
+                            message: feedbacks[index].message,
+                            date: feedbacks[index].createdAt,
                             onTap: () {},
                           ),
                         );
                       })
                   : Center(
                       child: Text(
-                        "Not Found",
+                        "O posts found",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     );
             }
 
-            if (state is InputStateLoading) {
+            if (state is FeedbackStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -78,7 +78,7 @@ class _InputsScreenState extends State<InputsScreen> {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<InputBloc>().add(LoadInputs());
+                context.read<FeedbackBloc>().add(LoadFeedbacks());
               },
             );
           },
@@ -87,7 +87,7 @@ class _InputsScreenState extends State<InputsScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: CustomColors.kPrimaryColor,
         onPressed: () {
-          Navigator.push(context, AddInputScreen.route());
+          Navigator.push(context, AddFeedbackScreen.route());
         },
         shape: const CircleBorder(),
         child: Icon(
