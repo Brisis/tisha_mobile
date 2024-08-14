@@ -25,6 +25,20 @@ class LoadFarmerApplications extends FarmerApplicationEvent {
   });
 }
 
+class AcceptFarmerApplicationEvent extends FarmerApplicationEvent {
+  final double quantity;
+  final String inputId;
+  final String applicationId;
+  final String userId;
+
+  const AcceptFarmerApplicationEvent({
+    required this.quantity,
+    required this.inputId,
+    required this.applicationId,
+    required this.userId,
+  });
+}
+
 class AddFarmerApplicationEvent extends FarmerApplicationEvent {
   final double quantity;
   final String message;

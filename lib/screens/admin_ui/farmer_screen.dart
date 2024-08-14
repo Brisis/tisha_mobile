@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
-import 'package:tisha_app/screens/admin_ui/farmer_applications_screen.dart';
 import 'package:tisha_app/screens/admin_ui/farmer_details_screen.dart';
 import 'package:tisha_app/screens/admin_ui/farmer_inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
@@ -61,7 +60,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.account_box_outlined,
+                        Icons.account_circle_rounded,
                         color: CustomColors.kIconColor,
                         size: 80,
                       ),
@@ -101,20 +100,20 @@ class _FarmerScreenState extends State<FarmerScreen> {
                       );
                     },
                   ),
-                  MenuItem(
-                    title: "Input Applications",
-                    subTitle: "${farmer.applications.length} applications",
-                    icon: Icons.notes_rounded,
-                    onTap: () {
-                      context.read<FarmerInputBloc>().add(
-                            LoadFarmerInputs(userId: farmer.id),
-                          );
-                      Navigator.push(
-                        context,
-                        FarmerApplicationsScreen.route(userId: farmer.id),
-                      );
-                    },
-                  ),
+                  // MenuItem(
+                  //   title: "Input Applications",
+                  //   subTitle: "${farmer.applications.length} applications",
+                  //   icon: Icons.notes_rounded,
+                  //   onTap: () {
+                  //     context.read<FarmerInputBloc>().add(
+                  //           LoadFarmerInputs(userId: farmer.id),
+                  //         );
+                  //     Navigator.push(
+                  //       context,
+                  //       FarmerApplicationsScreen.route(userId: farmer.id),
+                  //     );
+                  //   },
+                  // ),
                   MenuItem(
                     title: "Assigned Inputs",
                     subTitle: "${farmer.inputs.length} inputs",

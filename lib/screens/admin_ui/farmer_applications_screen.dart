@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
+import 'package:tisha_app/screens/admin_ui/farmer_application_screen.dart';
 import 'package:tisha_app/screens/widgets/application_item.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -49,9 +50,15 @@ class FarmerApplicationsScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: ApplicationItem(
                             farmer: applications[index].user,
-                            input: applications[index].input,
-                            date: applications[index].createdAt,
-                            onTap: () {},
+                            application: applications[index],
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  FarmerApplicationScreen.route(
+                                    farmer: applications[index].user,
+                                    application: applications[index],
+                                  ));
+                            },
                           ),
                         );
                       })

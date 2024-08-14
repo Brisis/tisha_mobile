@@ -4,8 +4,6 @@ import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
-import 'package:tisha_app/screens/widgets/custom_text_field.dart';
-import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
@@ -80,8 +78,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CustomSpaces.verticalSpace(height: 15),
                     Text(
-                      loggedUser.email,
+                      "${loggedUser.name} ${loggedUser.surname}",
                       style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    CustomSpaces.verticalSpace(),
+                    Text(
+                      "Role: ${loggedUser.role}",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: CustomColors.kBoldTextColor,
+                          ),
+                    ),
+                    CustomSpaces.verticalSpace(),
+                    Text(
+                      loggedUser.email,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     CustomSpaces.verticalSpace(height: 15),
                     BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -101,45 +111,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                   ],
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Full name",
-                  controller: _nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Name is required';
-                    }
-
-                    return null;
-                  },
-                ),
-                loggedUser.farmSize != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: CustomTextField(
-                          label: "Farm size (h.a)",
-                          keyboardType: TextInputType.number,
-                          controller: _sizeController,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-                CustomSpaces.verticalSpace(height: 15),
-                SearchableDropDown(
-                  items: [],
-                  labelText: "Choose Location",
-                ),
-                CustomSpaces.verticalSpace(height: 15),
-                CustomTextField(
-                  label: "Coordinates",
-                  controller: _coordinatesController,
-                ),
-                CustomSpaces.verticalSpace(height: 30),
-                CustomButton(
-                  label: "Save",
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
-                  },
                 ),
               ],
             ),

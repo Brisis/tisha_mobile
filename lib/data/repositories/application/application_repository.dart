@@ -15,6 +15,28 @@ class ApplicationRepository {
         .toList();
   }
 
+  Future<List<InputApplication>> acceptApplication({
+    required String token,
+    required double quantity,
+    required String inputId,
+    required String applicationId,
+    required String userId,
+  }) async {
+    final response = await applicationProvider.acceptApplication(
+      token: token,
+      quantity: quantity,
+      inputId: inputId,
+      userId: userId,
+      applicationId: applicationId,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => InputApplication.fromJson(i),
+        )
+        .toList();
+  }
+
   Future<List<InputApplication>> getFarmerApplications({
     required String token,
     required String userId,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
+import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 // import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
@@ -67,7 +69,9 @@ class _MainAppState extends State<MainApp> {
               BlocProvider.of<FarmerBloc>(context).add(LoadFarmers());
               BlocProvider.of<InputBloc>(context).add(LoadInputs());
               BlocProvider.of<LocationBloc>(context).add(LoadLocations());
-
+              BlocProvider.of<FarmerApplicationBloc>(context)
+                  .add(LoadApplications());
+              BlocProvider.of<FeedbackBloc>(context).add(LoadFeedbacks());
               if (state.user.role == "FARMER") {
                 _navigator!.pushAndRemoveUntil(
                   FarmerProfileScreen.route(),

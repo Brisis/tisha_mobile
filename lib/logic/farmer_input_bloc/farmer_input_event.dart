@@ -26,11 +26,13 @@ class LoadFarmerInputs extends FarmerInputEvent {
 class AddFarmerInputEvent extends FarmerInputEvent {
   final int quantity;
   final String inputId;
+  final String applicationId;
   final String userId;
 
   const AddFarmerInputEvent({
     required this.quantity,
     required this.inputId,
+    required this.applicationId,
     required this.userId,
   });
 }

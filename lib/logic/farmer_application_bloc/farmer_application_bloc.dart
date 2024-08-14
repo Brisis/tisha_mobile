@@ -129,6 +129,37 @@ class FarmerApplicationBloc
       }
     });
 
+    on<AcceptFarmerApplicationEvent>((event, emit) async {
+      emit(FarmerApplicationStateLoading());
+      try {
+        final token = await getAuthToken();
+
+        final applications = await applicationRepository.acceptApplication(
+          token: token!,
+          inputId: event.inputId,
+          quantity: event.quantity,
+          userId: event.userId,
+          applicationId: event.applicationId,
+        );
+
+        emit(LoadedApplications(applications: applications));
+      } on AppException catch (e) {
+        emit(
+          FarmerApplicationStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          FarmerApplicationStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
     on<SearchFarmerApplications>((event, emit) async {
       emit(FarmerApplicationStateSearchLoading());
       try {

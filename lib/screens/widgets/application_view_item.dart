@@ -4,11 +4,11 @@ import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
 
-class ApplicationItem extends StatelessWidget {
+class ApplicationViewItem extends StatelessWidget {
   final User farmer;
   final InputApplication application;
   final Function()? onTap;
-  const ApplicationItem({
+  const ApplicationViewItem({
     super.key,
     required this.farmer,
     required this.application,

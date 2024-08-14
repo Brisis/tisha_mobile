@@ -50,6 +50,40 @@ class ApplicationProvider {
     }
   }
 
+  Future<dynamic> acceptApplication({
+    required String token,
+    required double quantity,
+    required String inputId,
+    required String applicationId,
+    required String userId,
+  }) async {
+    try {
+      Map body = {
+        "inputId": inputId,
+        "quantity": quantity,
+        "applicationId": applicationId,
+        "userId": userId,
+      };
+      final response = await http.post(
+        Uri.parse("${AppUrls.SERVER_URL}/applications/accept"),
+        body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+      // throw ExceptionHandlers.getExceptionString(e);
+    }
+  }
+
   Future<dynamic> addApplication({
     required String token,
     required String inputId,

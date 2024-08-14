@@ -46,147 +46,157 @@ class FarmerProfileScreen extends StatelessWidget {
           builder: (context, state) {
             if (state is LoadedUser) {
               final loggedUser = state.user;
-              return ListView(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        UserDetailsScreen.route(),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.account_circle_rounded,
-                          color: CustomColors.kIconColor,
-                          size: 80,
-                        ),
-                        CustomSpaces.verticalSpace(height: 15),
-                        Text(
-                          "${loggedUser.name} ${loggedUser.surname}",
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: CustomColors.kBoldTextColor,
-                                  ),
-                        ),
-                        CustomSpaces.verticalSpace(),
-                        Text(
-                          loggedUser.email,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        CustomSpaces.verticalSpace(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_city,
-                              color: CustomColors.kIconColor,
-                            ),
-                            CustomSpaces.horizontalSpace(),
-                            Text(
-                              loggedUser.location?.name ?? "No Location",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        )
-                      ],
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context
+                      .read<UserBloc>()
+                      .add(UserEventUpdateDetails(user: loggedUser));
+                },
+                child: ListView(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          UserDetailsScreen.route(),
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.account_circle_rounded,
+                            color: CustomColors.kIconColor,
+                            size: 80,
+                          ),
+                          CustomSpaces.verticalSpace(height: 15),
+                          Text(
+                            "${loggedUser.name} ${loggedUser.surname}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: CustomColors.kBoldTextColor,
+                                ),
+                          ),
+                          CustomSpaces.verticalSpace(),
+                          Text(
+                            loggedUser.email,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          CustomSpaces.verticalSpace(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.location_city,
+                                color: CustomColors.kIconColor,
+                              ),
+                              CustomSpaces.horizontalSpace(),
+                              Text(
+                                loggedUser.location?.name ?? "No Location",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  CustomSpaces.verticalSpace(height: 30),
-                  BlocBuilder<InputBloc, InputState>(
-                    buildWhen: (previous, current) =>
-                        previous != current && current is LoadedInputs,
-                    builder: (context, state) {
-                      if (state is LoadedInputs) {
-                        return MenuItem(
-                          title: "Input Notifications",
-                          subTitle: "${state.inputs.length} added inputs",
-                          icon: Icons.notifications,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                InputNotificationsScreen.route(
-                                    userId: loggedUser.id));
-                          },
-                        );
-                      }
-
-                      if (state is InputStateLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return CustomButton(
-                        label: "Reload",
-                        onPressed: () {
-                          context.read<InputBloc>().add(LoadInputs());
-                        },
-                      );
-                    },
-                  ),
-                  MenuItem(
-                    title: "My Applications",
-                    subTitle: "${loggedUser.applications.length} applications",
-                    icon: Icons.notes,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        InputApplicationsScreen.route(
-                          farmer: loggedUser,
-                          applications: loggedUser.applications,
-                        ),
-                      );
-                    },
-                  ),
-                  MenuItem(
-                    title: "My Inputs",
-                    subTitle: "${loggedUser.inputs.length} inputs",
-                    icon: Icons.water_drop,
-                    onTap: () {
-                      context.read<FarmerInputBloc>().add(
-                            LoadFarmerInputs(userId: loggedUser.id),
+                    CustomSpaces.verticalSpace(height: 30),
+                    BlocBuilder<InputBloc, InputState>(
+                      buildWhen: (previous, current) =>
+                          previous != current && current is LoadedInputs,
+                      builder: (context, state) {
+                        if (state is LoadedInputs) {
+                          return MenuItem(
+                            title: "Input Notifications",
+                            subTitle: "${state.inputs.length} added inputs",
+                            icon: Icons.notifications,
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  InputNotificationsScreen.route(
+                                      userId: loggedUser.id));
+                            },
                           );
-                      Navigator.push(
-                        context,
-                        UserInputsScreen.route(userId: loggedUser.id),
-                      );
-                    },
-                  ),
-                  BlocBuilder<FeedbackBloc, FeedbackState>(
-                    buildWhen: (previous, current) =>
-                        previous != current && current is LoadedFeedbacks,
-                    builder: (context, state) {
-                      if (state is LoadedFeedbacks) {
-                        return MenuItem(
-                          title: "Farmer's Forum",
-                          subTitle: "${state.feedbacks.length} posts",
-                          icon: Icons.forum,
-                          onTap: () {
-                            Navigator.push(
-                                context, FeedbackForumScreen.route());
+                        }
+
+                        if (state is InputStateLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return CustomButton(
+                          label: "Reload",
+                          onPressed: () {
+                            context.read<InputBloc>().add(LoadInputs());
                           },
                         );
-                      }
-
-                      if (state is FeedbackStateLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                      },
+                    ),
+                    MenuItem(
+                      title: "My Applications",
+                      subTitle:
+                          "${loggedUser.applications.length} applications",
+                      icon: Icons.notes,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          InputApplicationsScreen.route(
+                            farmer: loggedUser,
+                            applications: loggedUser.applications,
+                          ),
                         );
-                      }
-                      return CustomButton(
-                        label: "Reload",
-                        onPressed: () {
-                          context.read<FeedbackBloc>().add(LoadFeedbacks());
-                        },
-                      );
-                    },
-                  ),
-                ],
+                      },
+                    ),
+                    MenuItem(
+                      title: "My Inputs",
+                      subTitle: "${loggedUser.inputs.length} inputs",
+                      icon: Icons.water_drop,
+                      onTap: () {
+                        context.read<FarmerInputBloc>().add(
+                              LoadFarmerInputs(userId: loggedUser.id),
+                            );
+                        Navigator.push(
+                          context,
+                          UserInputsScreen.route(userId: loggedUser.id),
+                        );
+                      },
+                    ),
+                    BlocBuilder<FeedbackBloc, FeedbackState>(
+                      buildWhen: (previous, current) =>
+                          previous != current && current is LoadedFeedbacks,
+                      builder: (context, state) {
+                        if (state is LoadedFeedbacks) {
+                          return MenuItem(
+                            title: "Farmer's Forum",
+                            subTitle: "${state.feedbacks.length} posts",
+                            icon: Icons.forum,
+                            onTap: () {
+                              Navigator.push(
+                                  context, FeedbackForumScreen.route());
+                            },
+                          );
+                        }
+
+                        if (state is FeedbackStateLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return CustomButton(
+                          label: "Reload",
+                          onPressed: () {
+                            context.read<FeedbackBloc>().add(LoadFeedbacks());
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               );
             }
 

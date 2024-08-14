@@ -75,7 +75,19 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         .firstWhere((element) => element.id == loggedUser.locationId);
     selectedDate = loggedUser.dob;
     _nameController.text = loggedUser.name;
-    _nameController.text = loggedUser.surname ?? "";
+    _surnameController.text = loggedUser.surname ?? "";
+    _nationalIdController.text = loggedUser.nationalId ?? "";
+    selectedGender = loggedUser.gender?.name;
+    _phoneNumberController.text = loggedUser.phone ?? "";
+    _addressController.text = loggedUser.address ?? "";
+    selectedOwnership = loggedUser.landOwnership?.name;
+    selectedFarmerType = loggedUser.farmerType?.name;
+    selectedCropType = loggedUser.cropType?.name;
+    selectedLivestock = loggedUser.livestockType?.name;
+
+    if (loggedUser.livestockNumber != null) {
+      _livestockNumberController.text = loggedUser.livestockNumber.toString();
+    }
     if (loggedUser.farmSize != null) {
       _sizeController.text = loggedUser.farmSize.toString();
     }
@@ -115,7 +127,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.account_box_outlined,
+                      Icons.account_circle_rounded,
                       color: CustomColors.kIconColor,
                       size: 80,
                     ),
@@ -174,7 +186,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   ),
                   onTap: () => _selectDate(context),
                   title: Text(
-                    "Date of Birth",
+                    "Date of Birth (Age: ${loggedUser.age})",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   subtitle: Padding(
@@ -386,37 +398,50 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           if (selectedLocation != null) {
-                            // context.read<UserBloc>().add(
-                            //       AddFarmerEvent(
-                            //         name: _nameController.text.trim(),
-                            //         surname: _surnameController.text.trim(),
-                            //         dob: selectedDate,
-                            //         gender: selectedGender,
-                            //         phone: _phoneNumberController.text.trim(),
-                            //         address: _addressController.text.trim(),
-                            //         nationalId:
-                            //             _nationalIdController.text.trim(),
-                            //         farmSize: double.parse(
-                            //             _sizeController.text.trim()),
-                            //         coordinates:
-                            //             _coordinatesController.text.trim(),
-                            //         locationId: selectedLocation!.id,
-                            //         landOwnership: selectedOwnership,
-                            //         farmerType: selectedFarmerType,
-                            //         cropType: selectedCropType,
-                            //         livestockType: selectedLivestock,
-                            //         livestockNumber: _livestockNumberController
-                            //                 .text
-                            //                 .trim()
-                            //                 .isNotEmpty
-                            //             ? int.parse(_livestockNumberController
-                            //                 .text
-                            //                 .trim())
-                            //             : null,
-                            //         email: _emailController.text.trim(),
-                            //         password: _passwordController.text.trim(),
-                            //       ),
-                            //     );
+                            context.read<UserBloc>().add(
+                                  UserEventUpdateDetails(
+                                    user: loggedUser.copyWith(
+                                      name: _nameController.text.trim(),
+                                      surname: _surnameController.text.trim(),
+                                      dob: selectedDate,
+                                      age: selectedDate != null
+                                          ? (DateTime.now().year -
+                                              selectedDate!.year)
+                                          : null,
+                                      gender: Gender.values.firstWhere(
+                                          (el) => el.name == selectedGender),
+                                      phone: _phoneNumberController.text.trim(),
+                                      address: _addressController.text.trim(),
+                                      nationalId:
+                                          _nationalIdController.text.trim(),
+                                      farmSize: double.parse(
+                                          _sizeController.text.trim()),
+                                      coordinates:
+                                          _coordinatesController.text.trim(),
+                                      locationId: selectedLocation!.id,
+                                      landOwnership: OwnerShip.values
+                                          .firstWhere((el) =>
+                                              el.name == selectedOwnership),
+                                      farmerType: FarmerType.values.firstWhere(
+                                          (el) =>
+                                              el.name == selectedFarmerType),
+                                      cropType: CropType.values.firstWhere(
+                                          (el) => el.name == selectedCropType),
+                                      livestockType: LiveStockType.values
+                                          .firstWhere((el) =>
+                                              el.name == selectedLivestock),
+                                      livestockNumber:
+                                          _livestockNumberController.text
+                                                  .trim()
+                                                  .isNotEmpty
+                                              ? int.parse(
+                                                  _livestockNumberController
+                                                      .text
+                                                      .trim())
+                                              : null,
+                                    ),
+                                  ),
+                                );
                           }
                         }
                       },
