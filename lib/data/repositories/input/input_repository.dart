@@ -16,6 +16,20 @@ class InputRepository {
         .toList();
   }
 
+  Future<List<FarmerInput>> getAllFarmerInputs({
+    required String token,
+  }) async {
+    final response = await inputProvider.getAllFarmerInputs(
+      token: token,
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (i) => FarmerInput.fromJson(i),
+        )
+        .toList();
+  }
+
   Future<List<FarmerInput>> getFarmerInputs({
     required String token,
     required String userId,

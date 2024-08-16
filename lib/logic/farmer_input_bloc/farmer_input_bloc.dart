@@ -15,6 +15,32 @@ class FarmerInputBloc extends Bloc<FarmerInputEvent, FarmerInputState> {
   FarmerInputBloc({
     required this.inputRepository,
   }) : super(FarmerInputStateInitial()) {
+    on<LoadAllFarmerInputs>((event, emit) async {
+      emit(FarmerInputStateLoading());
+      try {
+        final token = await getAuthToken();
+        final inputs = await inputRepository.getAllFarmerInputs(
+          token: token!,
+        );
+
+        emit(LoadedFarmerInputs(inputs: inputs));
+      } on AppException catch (e) {
+        emit(
+          FarmerInputStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          FarmerInputStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
     on<LoadFarmerInputs>((event, emit) async {
       emit(FarmerInputStateLoading());
       try {

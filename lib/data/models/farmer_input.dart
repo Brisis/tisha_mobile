@@ -11,6 +11,7 @@ class FarmerInput extends Equatable {
   final double? payback;
   final int quantity;
   final Input input;
+  final FarmerUser? user;
 
   const FarmerInput({
     required this.id,
@@ -20,6 +21,7 @@ class FarmerInput extends Equatable {
     this.payback,
     required this.quantity,
     required this.input,
+    this.user,
   });
 
   String toRawJson() => json.encode(toJson());
@@ -33,7 +35,8 @@ class FarmerInput extends Equatable {
             ? null
             : double.parse(json["payback"].toString()),
         quantity = int.parse(json["quantity"].toString()),
-        input = Input.fromJson(json["input"]);
+        input = Input.fromJson(json["input"]),
+        user = json["user"] == null ? null : FarmerUser.fromJson(json["user"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -43,6 +46,7 @@ class FarmerInput extends Equatable {
         "payback": payback,
         "quantity": quantity,
         "input": input.toJson(),
+        "user": user?.toJson(),
       };
 
   @override
@@ -54,6 +58,42 @@ class FarmerInput extends Equatable {
         payback,
         quantity,
         input,
+        user,
+      ];
+
+  @override
+  bool? get stringify => true;
+}
+
+class FarmerUser extends Equatable {
+  final String id;
+  final String name;
+  final String? surname;
+
+  const FarmerUser({
+    required this.id,
+    required this.name,
+    this.surname,
+  });
+
+  String toRawJson() => json.encode(toJson());
+
+  FarmerUser.fromJson(Map<String, dynamic> json)
+      : id = json["id"],
+        name = json["name"],
+        surname = json["surname"] == null ? null : json["surname"] as String;
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "surname": surname,
+      };
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        surname,
       ];
 
   @override

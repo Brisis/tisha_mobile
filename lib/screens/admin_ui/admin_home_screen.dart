@@ -7,6 +7,7 @@ import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/screens/admin_ui/farmers_screen.dart';
 import 'package:tisha_app/screens/admin_ui/input_applications_screen.dart';
+import 'package:tisha_app/screens/admin_ui/input_report_screen.dart';
 import 'package:tisha_app/screens/admin_ui/inputs_screen.dart';
 import 'package:tisha_app/screens/admin_ui/locations_screen.dart';
 import 'package:tisha_app/screens/feedback_forum_screen.dart';
@@ -52,10 +53,16 @@ class AdminHomeScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
           children: [
+            MenuItem(
+              title: "Reports",
+              subTitle: "input reports",
+              icon: Icons.info,
+              onTap: () {
+                Navigator.push(context, InputReportScreen.route());
+              },
+            ),
             BlocBuilder<FarmerBloc, FarmerState>(
               buildWhen: (previous, current) =>
                   previous != current && current is LoadedFarmers,

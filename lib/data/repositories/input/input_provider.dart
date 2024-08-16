@@ -27,6 +27,28 @@ class InputProvider {
     }
   }
 
+  Future<dynamic> getAllFarmerInputs({
+    required String token,
+  }) async {
+    try {
+      final response = await http.get(
+        Uri.parse("${AppUrls.SERVER_URL}/inputs/assigned"),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+    }
+  }
+
   Future<dynamic> getFarmerInputs({
     required String token,
     required String userId,

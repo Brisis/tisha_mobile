@@ -16,6 +16,8 @@ class SearchFarmerInputs extends FarmerInputEvent {
   });
 }
 
+class LoadAllFarmerInputs extends FarmerInputEvent {}
+
 class LoadFarmerInputs extends FarmerInputEvent {
   final String userId;
   const LoadFarmerInputs({
