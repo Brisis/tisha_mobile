@@ -39,6 +39,14 @@ class AcceptFarmerApplicationEvent extends FarmerApplicationEvent {
   });
 }
 
+class RejectFarmerApplicationEvent extends FarmerApplicationEvent {
+  final String applicationId;
+
+  const RejectFarmerApplicationEvent({
+    required this.applicationId,
+  });
+}
+
 class AddFarmerApplicationEvent extends FarmerApplicationEvent {
   final double quantity;
   final String message;

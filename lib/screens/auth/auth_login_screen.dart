@@ -44,12 +44,36 @@ class _AuthLoginScreenState extends State<AuthLoginScreen> {
                 label: "Email Address",
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null) {
+                    return "Email is required";
+                  }
+
+                  final bool emailValid = RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      .hasMatch(value);
+                  if (!emailValid) {
+                    return "Please enter a valid email";
+                  }
+
+                  return null;
+                },
               ),
               CustomSpaces.verticalSpace(height: 15),
               CustomTextField(
                 label: "Password",
                 controller: _passwordController,
                 obscureText: true,
+                validator: (value) {
+                  if (value == null) {
+                    return "Password is required";
+                  }
+                  if (value.length < 6) {
+                    return "Password should be atleast 6 characters";
+                  }
+
+                  return null;
+                },
               ),
               BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {

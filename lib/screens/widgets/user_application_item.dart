@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tisha_app/data/models/enums.dart';
 import 'package:tisha_app/data/models/input_application.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
@@ -43,7 +44,11 @@ class UserApplicationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              application.accepted ? "Status: Approved" : "Status: In Progress",
+              application.status == ApplicationStatus.ACCEPTED
+                  ? "Status: Approved"
+                  : application.status == ApplicationStatus.REJECTED
+                      ? "Status: Rejected"
+                      : "Status: In Progress",
               style: Theme.of(context).textTheme.bodySmall,
             ),
             CustomSpaces.verticalSpace(),

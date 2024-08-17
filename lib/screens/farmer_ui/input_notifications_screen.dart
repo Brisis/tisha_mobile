@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/screens/farmer_ui/input_application_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
@@ -7,19 +8,19 @@ import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
 class InputNotificationsScreen extends StatefulWidget {
-  static Route route({required String userId}) {
+  static Route route({required User farmer}) {
     return MaterialPageRoute(
       builder: (context) => InputNotificationsScreen(
-        userId: userId,
+        farmer: farmer,
       ),
     );
   }
 
-  final String userId;
+  final User farmer;
 
   const InputNotificationsScreen({
     super.key,
-    required this.userId,
+    required this.farmer,
   });
 
   @override
@@ -66,13 +67,23 @@ class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
                             unit: inputs[index].unit,
                             date: inputs[index].createdAt,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                InputApplicationScreen.route(
-                                  userId: widget.userId,
-                                  input: inputs[index],
-                                ),
-                              );
+                              if (widget.farmer.locationId ==
+                                  inputs[index].locationId) {
+                                Navigator.push(
+                                  context,
+                                  InputApplicationScreen.route(
+                                    loggedUser: widget.farmer,
+                                    input: inputs[index],
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        "This input is for farmers outside of your location"),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         );

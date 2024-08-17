@@ -119,7 +119,7 @@ class FarmerProfileScreen extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   InputNotificationsScreen.route(
-                                      userId: loggedUser.id));
+                                      farmer: loggedUser));
                             },
                           );
                         }

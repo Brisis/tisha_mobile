@@ -425,11 +425,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                       farmerType: FarmerType.values.firstWhere(
                                           (el) =>
                                               el.name == selectedFarmerType),
-                                      cropType: CropType.values.firstWhere(
-                                          (el) => el.name == selectedCropType),
-                                      livestockType: LiveStockType.values
-                                          .firstWhere((el) =>
-                                              el.name == selectedLivestock),
+                                      cropType: selectedCropType == null
+                                          ? null
+                                          : CropType.values.firstWhere((el) =>
+                                              el.name == selectedCropType),
+                                      livestockType: selectedLivestock == null
+                                          ? null
+                                          : LiveStockType.values.firstWhere(
+                                              (el) =>
+                                                  el.name == selectedLivestock),
                                       livestockNumber:
                                           _livestockNumberController.text
                                                   .trim()

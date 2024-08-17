@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class CustomColors {
-  static Color kPrimaryColor = Color.fromARGB(197, 9, 17, 152);
+  static Color kPrimaryColor = const Color(0xFF2db83d);
   static Color kDarkSurfaceColor = const Color(0xFF111418);
   static Color kBackgroundColor = const Color(0xFFFFFFFF);
   static Color kIconColor = const Color(0xFF7C8591);

@@ -66,7 +66,7 @@ class InputApplicationsScreen extends StatelessWidget {
         backgroundColor: CustomColors.kPrimaryColor,
         onPressed: () {
           Navigator.push(
-              context, InputNotificationsScreen.route(userId: farmer.id));
+              context, InputNotificationsScreen.route(farmer: farmer));
         },
         shape: const CircleBorder(),
         child: Icon(

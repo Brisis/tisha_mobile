@@ -84,6 +84,30 @@ class ApplicationProvider {
     }
   }
 
+  Future<dynamic> rejectApplication({
+    required String token,
+    required String applicationId,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${AppUrls.SERVER_URL}/applications/reject/$applicationId"),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+      // throw ExceptionHandlers.getExceptionString(e);
+    }
+  }
+
   Future<dynamic> addApplication({
     required String token,
     required String inputId,

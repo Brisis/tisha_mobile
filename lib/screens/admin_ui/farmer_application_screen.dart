@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/models/enums.dart';
 import 'package:tisha_app/data/models/input_application.dart';
 import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
@@ -95,7 +96,7 @@ class _FarmerApplicationScreenState extends State<FarmerApplicationScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 CustomSpaces.verticalSpace(height: 30),
-                widget.application.accepted
+                widget.application.status == ApplicationStatus.ACCEPTED
                     ? Text(
                         "Application Completed",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -103,75 +104,124 @@ class _FarmerApplicationScreenState extends State<FarmerApplicationScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                       )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "To give",
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    : widget.application.status == ApplicationStatus.REJECTED
+                        ? Text(
+                            "Application Rejected",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: CustomColors.kWarningColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "To give",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
                                       color: CustomColors.kBoldTextColor,
                                       fontWeight: FontWeight.bold,
                                     ),
-                          ),
-                          CustomSpaces.verticalSpace(),
-                          CustomTextField(
-                            label: "Quantity",
-                            keyboardType: TextInputType.number,
-                            controller: _quantityController,
-                          ),
-                          BlocBuilder<FarmerApplicationBloc,
-                              FarmerApplicationState>(
-                            builder: (context, state) {
-                              if (state is FarmerApplicationStateError) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 30.0),
-                                  child: Text(
-                                    state.message!.message!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                          color: CustomColors.kWarningColor,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                          CustomSpaces.verticalSpace(height: 30),
-                          BlocBuilder<FarmerApplicationBloc,
-                              FarmerApplicationState>(
-                            builder: (context, state) {
-                              if (state is FarmerApplicationStateLoading) {
-                                return const CustomButton();
-                              }
-                              return CustomButton(
-                                label: "Accept",
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<FarmerApplicationBloc>().add(
-                                          AcceptFarmerApplicationEvent(
-                                            quantity: double.parse(
-                                                _quantityController.text
-                                                    .trim()),
-                                            inputId:
-                                                widget.application.input.id,
-                                            userId: widget.application.user.id,
-                                            applicationId:
-                                                widget.application.id,
-                                          ),
-                                        );
+                              ),
+                              CustomSpaces.verticalSpace(),
+                              CustomTextField(
+                                label: "Quantity",
+                                keyboardType: TextInputType.number,
+                                controller: _quantityController,
+                              ),
+                              BlocBuilder<FarmerApplicationBloc,
+                                  FarmerApplicationState>(
+                                builder: (context, state) {
+                                  if (state is FarmerApplicationStateError) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 30.0),
+                                      child: Text(
+                                        state.message!.message!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                              color: CustomColors.kWarningColor,
+                                            ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    );
                                   }
+                                  return const SizedBox.shrink();
                                 },
-                              );
-                            },
-                          ),
-                        ],
-                      )
+                              ),
+                              CustomSpaces.verticalSpace(height: 30),
+                              BlocBuilder<FarmerApplicationBloc,
+                                  FarmerApplicationState>(
+                                builder: (context, state) {
+                                  if (state is FarmerApplicationStateLoading) {
+                                    return const CustomButton();
+                                  }
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomButton(
+                                        buttonColor: CustomColors.kWarningColor,
+                                        label: "Reject",
+                                        onPressed: () {
+                                          context
+                                              .read<FarmerApplicationBloc>()
+                                              .add(
+                                                RejectFarmerApplicationEvent(
+                                                  applicationId:
+                                                      widget.application.id,
+                                                ),
+                                              );
+                                        },
+                                      ),
+                                      CustomSpaces.verticalSpace(height: 15),
+                                      Center(
+                                        child: Text(
+                                          "OR",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      CustomSpaces.verticalSpace(height: 15),
+                                      CustomButton(
+                                        label: "Accept",
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            context
+                                                .read<FarmerApplicationBloc>()
+                                                .add(
+                                                  AcceptFarmerApplicationEvent(
+                                                    quantity: double.parse(
+                                                        _quantityController.text
+                                                            .trim()),
+                                                    inputId: widget
+                                                        .application.input.id,
+                                                    userId: widget
+                                                        .application.user.id,
+                                                    applicationId:
+                                                        widget.application.id,
+                                                  ),
+                                                );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          )
               ],
             ),
           ),

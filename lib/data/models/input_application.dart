@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:tisha_app/data/models/enums.dart';
 import 'package:tisha_app/data/models/input.dart';
 import 'package:tisha_app/data/models/user.dart';
 
@@ -8,7 +9,7 @@ class InputApplication extends Equatable {
   final String id;
   final DateTime createdAt;
   final User user;
-  final bool accepted;
+  final ApplicationStatus status;
   final String message;
   final Input input;
   final double quantity;
@@ -17,7 +18,7 @@ class InputApplication extends Equatable {
     required this.id,
     required this.user,
     required this.createdAt,
-    required this.accepted,
+    required this.status,
     required this.message,
     required this.input,
     required this.quantity,
@@ -29,7 +30,8 @@ class InputApplication extends Equatable {
       : id = json["id"],
         user = User.fromJson(json["user"]),
         createdAt = DateTime.parse(json["createdAt"].toString()),
-        accepted = json["accepted"],
+        status = ApplicationStatus.values
+            .firstWhere((value) => value.name == json["status"].toString()),
         message = json["message"],
         quantity = double.parse(json["quantity"].toString()),
         input = Input.fromJson(json["input"]);
@@ -38,7 +40,7 @@ class InputApplication extends Equatable {
         "id": id,
         "user": user.toJson(),
         "createdAt": createdAt,
-        "accepted": accepted,
+        "status": status.name,
         "quantity": quantity,
         "message": message,
         "input": input.toJson(),
@@ -50,7 +52,7 @@ class InputApplication extends Equatable {
         user,
         createdAt,
         quantity,
-        accepted,
+        status,
         message,
         input,
       ];
@@ -62,7 +64,7 @@ class InputApplication extends Equatable {
 class UserInputApplication extends Equatable {
   final String id;
   final DateTime createdAt;
-  final bool accepted;
+  final ApplicationStatus status;
   final String message;
   final Input input;
   final double quantity;
@@ -70,7 +72,7 @@ class UserInputApplication extends Equatable {
   const UserInputApplication({
     required this.id,
     required this.createdAt,
-    required this.accepted,
+    required this.status,
     required this.message,
     required this.input,
     required this.quantity,
@@ -81,7 +83,8 @@ class UserInputApplication extends Equatable {
   UserInputApplication.fromJson(Map<String, dynamic> json)
       : id = json["id"],
         createdAt = DateTime.parse(json["createdAt"].toString()),
-        accepted = json["accepted"],
+        status = ApplicationStatus.values
+            .firstWhere((value) => value.name == json["status"].toString()),
         message = json["message"],
         quantity = double.parse(json["quantity"].toString()),
         input = Input.fromJson(json["input"]);
@@ -89,7 +92,7 @@ class UserInputApplication extends Equatable {
   Map<String, dynamic> toJson() => {
         "id": id,
         "createdAt": createdAt,
-        "accepted": accepted,
+        "status": status.name,
         "quantity": quantity,
         "message": message,
         "input": input.toJson(),
@@ -100,7 +103,7 @@ class UserInputApplication extends Equatable {
         id,
         createdAt,
         quantity,
-        accepted,
+        status,
         message,
         input,
       ];

@@ -28,7 +28,7 @@ class WelcomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              CustomSpaces.verticalSpace(height: 15),
+              CustomSpaces.verticalSpace(height: 30),
               CustomButton(
                 label: "Get Started",
                 onPressed: () {

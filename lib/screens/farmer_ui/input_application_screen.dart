@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tisha_app/data/models/input.dart';
+import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
+import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
 import 'package:tisha_app/screens/widgets/custom_text_field.dart';
 import 'package:tisha_app/screens/widgets/input_item.dart';
@@ -10,22 +12,22 @@ import 'package:tisha_app/theme/spaces.dart';
 
 class InputApplicationScreen extends StatefulWidget {
   static Route route({
-    required String userId,
+    required User loggedUser,
     required Input input,
   }) {
     return MaterialPageRoute(
       builder: (context) => InputApplicationScreen(
-        userId: userId,
+        loggedUser: loggedUser,
         input: input,
       ),
     );
   }
 
-  final String userId;
+  final User loggedUser;
   final Input input;
   const InputApplicationScreen({
     super.key,
-    required this.userId,
+    required this.loggedUser,
     required this.input,
   });
 
@@ -57,6 +59,9 @@ class _InputApplicationScreenState extends State<InputApplicationScreen> {
         listener: (context, state) {
           if (state is LoadedFarmerApplications) {
             Navigator.pop(context);
+            context
+                .read<UserBloc>()
+                .add(UserEventUpdateDetails(user: widget.loggedUser));
           }
         },
         child: Padding(
@@ -131,7 +136,7 @@ class _InputApplicationScreenState extends State<InputApplicationScreen> {
                                       _quantityController.text.trim()),
                                   message: _messageController.text.trim(),
                                   inputId: widget.input.id,
-                                  userId: widget.userId,
+                                  userId: widget.loggedUser.id,
                                 ),
                               );
                         }
