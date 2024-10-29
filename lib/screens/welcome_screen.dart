@@ -23,7 +23,7 @@ class WelcomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Tisha App",
+                "GovFarmInputTracker",
                 style: Theme.of(context).textTheme.displayLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

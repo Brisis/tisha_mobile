@@ -9,15 +9,15 @@ import 'package:tisha_app/data/models/location.dart';
 
 class User extends Equatable {
   final String id;
-  final String name;
-  final String? surname;
+  final String firstname;
+  final String? lastname;
   final DateTime? dob;
   final int? age;
   final Gender? gender;
   final String? phone;
   final String? address;
   final String? nationalId;
-  final String role;
+  final Role role;
 
   //farm details
   final double? farmSize;
@@ -40,9 +40,9 @@ class User extends Equatable {
   final List<UserInputApplication> applications;
   const User({
     required this.id,
-    required this.name,
+    required this.firstname,
     required this.role,
-    this.surname,
+    this.lastname,
     this.dob,
     this.age,
     this.gender,
@@ -70,12 +70,12 @@ class User extends Equatable {
   });
 
   User copyWith({
-    String? name,
-    String? role,
-    String? surname,
+    String? firstname,
+    String? lastname,
     DateTime? dob,
     int? age,
     Gender? gender,
+    Role? role,
     String? phone,
     String? address,
     String? nationalId,
@@ -99,9 +99,9 @@ class User extends Equatable {
   }) =>
       User(
         id: id,
-        name: name ?? this.name,
+        firstname: firstname ?? this.firstname,
         role: role ?? this.role,
-        surname: surname ?? this.surname,
+        lastname: lastname ?? this.lastname,
         dob: dob ?? this.dob,
         age: age ?? this.age,
         gender: gender ?? this.gender,
@@ -134,9 +134,8 @@ class User extends Equatable {
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
-        name: json["name"],
-        role: json["role"],
-        surname: json["surname"] == null ? null : json["surname"] as String,
+        firstname: json["firstname"],
+        lastname: json["lastname"] == null ? null : json["lastname"] as String,
         dob:
             json["dob"] == null ? null : DateTime.parse(json["dob"].toString()),
         age: json["age"] == null ? null : int.parse(json["age"].toString()),
@@ -144,6 +143,8 @@ class User extends Equatable {
             ? null
             : Gender.values
                 .firstWhere((value) => value.name == json["gender"].toString()),
+        role: Role.values
+            .firstWhere((value) => value.name == json["role"].toString()),
         phone: json["phone"] == null ? null : json["phone"] as String,
         address: json["address"] == null ? null : json["address"] as String,
         nationalId:
@@ -199,9 +200,9 @@ class User extends Equatable {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
-        "role": role,
-        "surname": surname,
+        "firstname": firstname,
+        "role": role.name,
+        "lastname": lastname,
         "dob": dob?.toIso8601String(),
         "age": age,
         "gender": gender?.name,
@@ -228,9 +229,9 @@ class User extends Equatable {
   @override
   List<Object?> get props => [
         id,
-        name,
+        firstname,
         role,
-        surname,
+        lastname,
         dob,
         age,
         gender,

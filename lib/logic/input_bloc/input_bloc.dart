@@ -49,10 +49,49 @@ class InputBloc extends Bloc<InputEvent, InputState> {
           quantity: event.quantity,
           locationId: event.locationId,
           unit: event.unit,
+          type: event.type,
+          scheme: event.scheme,
+          barcode: event.barcode,
+          chassisNumber: event.chassisNumber,
+          engineType: event.unit,
+          numberPlate: event.numberPlate,
+          color: event.color,
           userId: event.userId,
         );
 
+        emit(InputCreated());
+
         emit(LoadedInputs(inputs: inputs));
+      } on AppException catch (e) {
+        emit(
+          InputStateError(
+            message: e,
+          ),
+        );
+      } on TimeoutException catch (e) {
+        emit(
+          InputStateError(
+            message: AppException(
+              message: e.message,
+            ),
+          ),
+        );
+      }
+    });
+
+    on<NotifyInput>((event, emit) async {
+      emit(InputStateSearchLoading());
+      try {
+        final token = await getAuthToken();
+
+        final inputs = await inputRepository.notifyInput(
+          token: token!,
+          inputId: event.inputId,
+        );
+
+        emit(
+          LoadedInputs(inputs: inputs),
+        );
       } on AppException catch (e) {
         emit(
           InputStateError(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tisha_app/data/models/enums.dart';
 import 'package:tisha_app/data/models/location.dart';
 import 'package:tisha_app/data/models/user.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
+import 'package:tisha_app/screens/admin_ui/inputs_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
+import 'package:tisha_app/screens/widgets/custom_dropdown.dart';
 import 'package:tisha_app/screens/widgets/custom_text_field.dart';
 import 'package:tisha_app/screens/widgets/searchable_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
@@ -33,6 +36,15 @@ class _AddInputScreenState extends State<AddInputScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _quantityUnitController = TextEditingController();
+  final TextEditingController _barcodeController = TextEditingController();
+  final TextEditingController _chassisNumberController =
+      TextEditingController();
+  final TextEditingController _engineTypeController = TextEditingController();
+  final TextEditingController _numberPlateController = TextEditingController();
+  final TextEditingController _colorController = TextEditingController();
+
+  String? selectedType;
+  String? selectedScheme;
 
   @override
   void initState() {
@@ -59,8 +71,12 @@ class _AddInputScreenState extends State<AddInputScreen> {
       ),
       body: BlocListener<InputBloc, InputState>(
         listener: (context, state) {
-          if (state is LoadedInputs) {
-            Navigator.pop(context);
+          if (state is InputCreated) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              InputsScreen.route(),
+              (route) => false,
+            );
           }
         },
         child: Padding(
@@ -85,18 +101,98 @@ class _AddInputScreenState extends State<AddInputScreen> {
                     return null;
                   },
                 ),
-                CustomSpaces.verticalSpace(height: 15),
+                CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: InputScheme.values.map((value) => value.name).toList(),
+                  hintText: "Input Scheme",
+                  selectedItem: selectedScheme,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedScheme = value!;
+                    });
+                  },
+                ),
+                selectedScheme == null
+                    ? Text(
+                        "Scheme is required",
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomColors.kWarningColor,
+                            ),
+                      )
+                    : const SizedBox.shrink(),
+                // CustomSpaces.verticalSpace(),
+                CustomDropdown(
+                  items: InputType.values.map((value) => value.name).toList(),
+                  hintText: "Type",
+                  selectedItem: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value!;
+                    });
+                  },
+                ),
+                selectedType == null
+                    ? Text(
+                        "Type is required",
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomColors.kWarningColor,
+                            ),
+                      )
+                    : const SizedBox.shrink(),
+                // CustomSpaces.verticalSpace(),
                 CustomTextField(
                   label: "Quantity",
                   keyboardType: TextInputType.number,
                   controller: _quantityController,
                 ),
-                CustomSpaces.verticalSpace(height: 15),
+                CustomSpaces.verticalSpace(),
                 CustomTextField(
-                  label: "Quantity Unit",
+                  label: "Unit",
                   controller: _quantityUnitController,
                 ),
-                CustomSpaces.verticalSpace(height: 15),
+                CustomSpaces.verticalSpace(),
+                CustomTextField(
+                  label: "Barcode number",
+                  controller: _barcodeController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Barcode number is required';
+                    }
+
+                    return null;
+                  },
+                ),
+                CustomSpaces.verticalSpace(),
+                selectedType != null && selectedType == InputType.Tructor.name
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextField(
+                              label: "Chassis number",
+                              controller: _chassisNumberController,
+                            ),
+                            CustomSpaces.verticalSpace(),
+                            CustomTextField(
+                              label: "Engine type",
+                              controller: _engineTypeController,
+                            ),
+                            CustomSpaces.verticalSpace(),
+                            CustomTextField(
+                              label: "Number plate",
+                              controller: _numberPlateController,
+                            ),
+                            CustomSpaces.verticalSpace(),
+                            CustomTextField(
+                              label: "Color",
+                              controller: _colorController,
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 Row(
                   children: [
                     Expanded(
@@ -176,13 +272,25 @@ class _AddInputScreenState extends State<AddInputScreen> {
                       label: "Submit",
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (selectedLocation != null) {
+                          if (selectedLocation != null &&
+                              selectedType != null &&
+                              selectedScheme != null) {
                             context.read<InputBloc>().add(
                                   AddInputEvent(
                                     name: _nameController.text.trim(),
                                     quantity: int.parse(
                                         _quantityController.text.trim()),
                                     unit: _quantityUnitController.text.trim(),
+                                    type: selectedType!,
+                                    scheme: selectedScheme!,
+                                    barcode: _barcodeController.text.trim(),
+                                    chassisNumber:
+                                        _chassisNumberController.text.trim(),
+                                    engineType:
+                                        _engineTypeController.text.trim(),
+                                    numberPlate:
+                                        _numberPlateController.text.trim(),
+                                    color: _colorController.text.trim(),
                                     locationId: selectedLocation!.id,
                                     userId: loggedUser.id,
                                   ),

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/logic/farmer_application_bloc/farmer_application_bloc.dart';
+import 'package:tisha_app/screens/admin_ui/farmer_application_screen.dart';
+import 'package:tisha_app/screens/widgets/application_item.dart';
 import 'package:tisha_app/screens/widgets/custom_button.dart';
-import 'package:tisha_app/screens/widgets/input_item.dart';
 import 'package:tisha_app/theme/colors.dart';
 
-class FarmerInputsScreen extends StatelessWidget {
+class FarmerApplicationsScreen extends StatelessWidget {
   static Route route({required String userId}) {
     return MaterialPageRoute(
-      builder: (context) => FarmerInputsScreen(
+      builder: (context) => FarmerApplicationsScreen(
         userId: userId,
       ),
     );
@@ -16,7 +17,7 @@ class FarmerInputsScreen extends StatelessWidget {
 
   final String userId;
 
-  const FarmerInputsScreen({
+  const FarmerApplicationsScreen({
     super.key,
     required this.userId,
   });
@@ -29,7 +30,7 @@ class FarmerInputsScreen extends StatelessWidget {
         backgroundColor: CustomColors.kPrimaryColor,
         elevation: 1.0,
         title: Text(
-          "Assigned Inputs",
+          "Input Applications",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: CustomColors.kWhiteTextColor,
               ),
@@ -37,23 +38,27 @@ class FarmerInputsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<FarmerInputBloc, FarmerInputState>(
+        child: BlocBuilder<FarmerApplicationBloc, FarmerApplicationState>(
           builder: (context, state) {
-            if (state is LoadedFarmerInputs) {
-              final inputs = state.inputs.reversed.toList();
-              return inputs.isNotEmpty
+            if (state is LoadedFarmerApplications) {
+              final applications = state.applications.reversed.toList();
+              return applications.isNotEmpty
                   ? ListView.builder(
-                      itemCount: inputs.length,
+                      itemCount: applications.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: InputItem(
-                            name: inputs[index].input.name,
-                            quantity: inputs[index].quantity,
-                            unit: inputs[index].input.unit ?? "",
-                            received: inputs[index].received,
-                            date: inputs[index].createdAt,
-                            onTap: () {},
+                          child: ApplicationItem(
+                            farmer: applications[index].user,
+                            application: applications[index],
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  FarmerApplicationScreen.route(
+                                    farmer: applications[index].user,
+                                    application: applications[index],
+                                  ));
+                            },
                           ),
                         );
                       })
@@ -65,7 +70,7 @@ class FarmerInputsScreen extends StatelessWidget {
                     );
             }
 
-            if (state is FarmerInputStateLoading) {
+            if (state is FarmerApplicationStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -74,8 +79,8 @@ class FarmerInputsScreen extends StatelessWidget {
             return CustomButton(
               label: "Reload",
               onPressed: () {
-                context.read<FarmerInputBloc>().add(
-                      LoadFarmerInputs(userId: userId),
+                context.read<FarmerApplicationBloc>().add(
+                      LoadFarmerApplications(userId: userId),
                     );
               },
             );

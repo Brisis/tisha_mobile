@@ -57,11 +57,11 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                 ),
                 CustomSpaces.verticalSpace(height: 15),
                 CustomTextField(
-                  label: "Location name",
+                  label: "Ward",
                   controller: _nameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Name is required';
+                      return 'Ward is required';
                     }
 
                     return null;
@@ -69,8 +69,15 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                 ),
                 CustomSpaces.verticalSpace(height: 15),
                 CustomTextField(
-                  label: "City",
+                  label: "District",
                   controller: _cityController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'District is required';
+                    }
+
+                    return null;
+                  },
                 ),
                 BlocBuilder<LocationBloc, LocationState>(
                   builder: (context, state) {

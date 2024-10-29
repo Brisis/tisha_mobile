@@ -91,7 +91,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                   CustomSpaces.verticalSpace(height: 30),
                   MenuItem(
                     title: "Farmer Details",
-                    subTitle: "${farmer.name} ${farmer.surname}",
+                    subTitle: "${farmer.firstname} ${farmer.lastname}",
                     icon: Icons.person,
                     onTap: () {
                       Navigator.push(

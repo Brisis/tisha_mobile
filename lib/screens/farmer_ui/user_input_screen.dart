@@ -84,7 +84,7 @@ class _UserInputScreenState extends State<UserInputScreen> {
                       InputItem(
                         name: widget.input.input.name,
                         quantity: widget.input.quantity,
-                        unit: widget.input.input.unit,
+                        unit: widget.input.input.unit ?? "",
                         date: widget.input.createdAt,
                       ),
                       CustomSpaces.verticalSpace(height: 15),

@@ -73,7 +73,7 @@ class _InputApplicationScreenState extends State<InputApplicationScreen> {
                 InputItem(
                   name: widget.input.name,
                   quantity: widget.input.quantity,
-                  unit: widget.input.unit,
+                  unit: widget.input.unit ?? "",
                   date: widget.input.createdAt,
                 ),
                 CustomSpaces.verticalSpace(height: 30),

@@ -50,7 +50,7 @@ class FarmerDetailsScreen extends StatelessWidget {
                 CustomSpaces.horizontalSpace(),
                 Expanded(
                   child: Text(
-                    "${farmer.name} ${farmer.surname}",
+                    "${farmer.firstname} ${farmer.lastname}",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),

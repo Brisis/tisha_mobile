@@ -1,55 +1,48 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/core/config/constants.dart';
-import 'package:tisha_app/data/models/farmer_input.dart';
-import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/data/models/user.dart';
+import 'package:tisha_app/logic/person_bloc%20/person_bloc.dart';
+import 'package:tisha_app/screens/admin_ui/add_user_screen.dart';
+import 'package:tisha_app/screens/admin_ui/admin_home_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-class InputReportScreen extends StatefulWidget {
+class UsersScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const InputReportScreen(),
+      builder: (context) => const UsersScreen(),
     );
   }
 
-  const InputReportScreen({super.key});
+  const UsersScreen({super.key});
 
   @override
-  State<InputReportScreen> createState() => _InputReportScreenState();
+  State<UsersScreen> createState() => _UsersScreenState();
 }
 
-class _InputReportScreenState extends State<InputReportScreen> {
+class _UsersScreenState extends State<UsersScreen> {
   late String selectedDateFilter;
   String? selectedStatusFilter;
-  List<FarmerInput> inputs = [];
-  List<FarmerInput> dispInputs = [];
+  List<User> people = [];
+  List<User> dispPeople = [];
   @override
   void initState() {
     super.initState();
-    context.read<FarmerInputBloc>().add(LoadAllFarmerInputs());
+    context.read<PersonBloc>().add(LoadPeople());
     selectedDateFilter = "Desc";
-  }
-
-  Future<void> requestStoragePermission() async {
-    if (await Permission.storage.request().isGranted) {
-      // Storage permission granted
-    } else {
-      // Handle the case if permission is denied
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<FarmerInputBloc, FarmerInputState>(
+    return BlocListener<PersonBloc, PersonState>(
       listener: (context, state) {
-        if (state is LoadedFarmerInputs) {
+        if (state is LoadedPeople) {
           setState(() {
-            inputs = state.inputs;
-            dispInputs = inputs;
+            people = state.people;
+            dispPeople = people;
           });
         }
       },
@@ -59,8 +52,12 @@ class _InputReportScreenState extends State<InputReportScreen> {
           iconTheme: IconThemeData(color: CustomColors.kWhiteTextColor),
           backgroundColor: CustomColors.kPrimaryColor,
           elevation: 1.0,
+          leading: IconButton(
+            onPressed: () => Navigator.push(context, AdminHomeScreen.route()),
+            icon: const Icon(Icons.arrow_back),
+          ),
           title: Text(
-            "Input Reports",
+            "All Users",
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: CustomColors.kWhiteTextColor,
                 ),
@@ -75,15 +72,12 @@ class _InputReportScreenState extends State<InputReportScreen> {
               CupertinoSearchTextField(
                 onSubmitted: (value) {
                   setState(() {
-                    dispInputs = inputs
+                    dispPeople = people
                         .where((inp) =>
-                            inp.input.name
+                            inp.firstname
                                 .toLowerCase()
                                 .contains(value.toLowerCase()) ||
-                            inp.user!.name
-                                .toLowerCase()
-                                .contains(value.toLowerCase()) ||
-                            inp.user!.surname
+                            inp.lastname
                                 .toString()
                                 .toLowerCase()
                                 .contains(value.toLowerCase()))
@@ -103,12 +97,12 @@ class _InputReportScreenState extends State<InputReportScreen> {
                         if (value == "Asc") {
                           setState(() {
                             selectedDateFilter = value!;
-                            dispInputs = inputs.reversed.toList();
+                            dispPeople = people.reversed.toList();
                           });
                         } else {
                           setState(() {
                             selectedDateFilter = value!;
-                            dispInputs = inputs;
+                            dispPeople = people;
                           });
                         }
                       },
@@ -121,29 +115,25 @@ class _InputReportScreenState extends State<InputReportScreen> {
                     child: CustomDropdown(
                       selectedItem: selectedStatusFilter,
                       onChanged: (value) {
-                        if (value == "Received") {
-                          setState(() {
-                            selectedStatusFilter = value;
-                            dispInputs = inputs
-                                .where((inp) => inp.received == true)
-                                .toList();
-                          });
-                        } else {
-                          setState(() {
-                            selectedStatusFilter = value;
-                            dispInputs = inputs
-                                .where((inp) => inp.received == false)
-                                .toList();
-                          });
-                        }
+                        setState(() {
+                          selectedStatusFilter = value;
+                          dispPeople = people
+                              .where((person) => person.role.name == value)
+                              .toList();
+                        });
                       },
-                      hintText: "Filter by Status",
-                      items: const ["Received", "In Progress"],
+                      hintText: "Filter Role",
+                      items: const [
+                        "FARMER",
+                        "INPUTCOORDINATOR",
+                        "FIELDOFFICER",
+                        "SUPERUSER"
+                      ],
                     ),
                   ),
                 ],
               ),
-              dispInputs.isNotEmpty
+              dispPeople.isNotEmpty
                   ? SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
@@ -152,7 +142,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Name',
+                                'Firstname',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -160,7 +150,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Quantity',
+                                'Lastname',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -168,7 +158,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Given',
+                                'Gender',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -176,7 +166,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'To',
+                                'D.O.B',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -184,63 +174,36 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Location',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Date',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Status',
+                                'Role',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
                           ),
                         ],
                         rows: [
-                          for (var farmerInput in dispInputs)
+                          for (var person in dispPeople)
                             DataRow(
                               cells: <DataCell>[
                                 DataCell(
                                   Text(
-                                    farmerInput.input.name,
+                                    person.firstname,
                                   ),
                                 ),
                                 DataCell(
-                                  Text(farmerInput.input.quantity.toString()),
+                                  Text(person.lastname ?? ""),
                                 ),
                                 DataCell(
-                                  Text(farmerInput.quantity.toString()),
+                                  Text(person.gender?.name ?? ""),
                                 ),
                                 DataCell(
-                                  Text(
-                                      "${farmerInput.user?.name} ${farmerInput.user?.surname}"),
-                                ),
-                                DataCell(
-                                  Text(
-                                      "${farmerInput.user?.location?.name}, ${farmerInput.user?.location?.city}"),
-                                ),
-                                DataCell(
-                                  Text(
-                                    farmerInput.createdAt
-                                        .toIso8601String()
-                                        .substring(0, 10),
-                                  ),
+                                  Text(person.dob
+                                          ?.toIso8601String()
+                                          .substring(0, 10) ??
+                                      ""),
                                 ),
                                 DataCell(
                                   Text(
-                                    farmerInput.received
-                                        ? "Received"
-                                        : "In Progress",
+                                    person.role.name,
                                   ),
                                 ),
                               ],
@@ -259,43 +222,12 @@ class _InputReportScreenState extends State<InputReportScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: CustomColors.kPrimaryColor,
-          onPressed: () async {
-            List<List<String>> tableData = [
-              [
-                "Name",
-                "Quantity",
-                "Given Quantity",
-                "Farmer",
-                "Location",
-                "Date",
-                "Status"
-              ],
-            ];
-
-            //download here
-            final inputData = dispInputs
-                .map((input) => List<String>.from([
-                      (input.input.name),
-                      (input.input.quantity.toString()),
-                      input.quantity.toString(),
-                      "${input.user?.name} ${input.user?.surname}",
-                      "${input.user?.location?.name}, ${input.user?.location?.city}",
-                      (input.createdAt.toIso8601String().substring(0, 10)),
-                      input.received ? "Received" : "In Progress"
-                    ]))
-                .toList();
-
-            tableData.add(inputData.expand((element) => element).toList());
-
-            FileStorage.exportDataTableToExcel(tableData, "Input_Report_Data");
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("File saved to Downloads")),
-            );
+          onPressed: () {
+            Navigator.push(context, AddUserScreen.route());
           },
           shape: const CircleBorder(),
           child: Icon(
-            Icons.download,
+            Icons.add,
             color: CustomColors.kWhiteTextColor,
           ),
         ),

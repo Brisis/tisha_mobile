@@ -32,7 +32,7 @@ class FeedbackItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "${farmer.name} ${farmer.surname}",
+                "${farmer.firstname} ${farmer.lastname}",
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: CustomColors.kBoldTextColor,

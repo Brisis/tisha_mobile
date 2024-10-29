@@ -51,7 +51,7 @@ class UserInputsScreen extends StatelessWidget {
                           child: InputItem(
                             name: inputs[index].input.name,
                             quantity: inputs[index].quantity,
-                            unit: inputs[index].input.unit,
+                            unit: inputs[index].input.unit ?? "",
                             date: inputs[index].createdAt,
                             received: inputs[index].received,
                             onTap: () {

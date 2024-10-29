@@ -34,7 +34,7 @@ class ApplicationItem extends StatelessWidget {
         ),
       ),
       title: Text(
-        "${farmer.name} ${farmer.surname}",
+        "${farmer.firstname} ${farmer.lastname}",
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.bold,
             ),

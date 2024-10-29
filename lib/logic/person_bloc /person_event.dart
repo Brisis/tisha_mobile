@@ -1,42 +1,44 @@
-part of 'farmer_bloc.dart';
+part of 'person_bloc.dart';
 
-abstract class FarmerEvent extends Equatable {
-  const FarmerEvent();
+abstract class PersonEvent extends Equatable {
+  const PersonEvent();
   @override
   List<Object?> get props => [];
 }
 
-class LoadFarmer extends FarmerEvent {
+class LoadPerson extends PersonEvent {
   final String id;
 
-  const LoadFarmer({
+  const LoadPerson({
     required this.id,
   });
 }
 
-class SearchFarmer extends FarmerEvent {
+class SearchPerson extends PersonEvent {
   final String userId;
   final String? query;
   final String? locationId;
 
-  const SearchFarmer({
+  const SearchPerson({
     this.query,
     this.locationId,
     required this.userId,
   });
 }
 
-class LoadFarmers extends FarmerEvent {}
+class LoadPeople extends PersonEvent {}
 
-class AddFarmerEvent extends FarmerEvent {
-  final String name;
-  final String? surname;
+class AddPersonEvent extends PersonEvent {
+  final String firstname;
+  final String? lastname;
   final DateTime? dob;
   final String? gender;
+  final String? role;
   final String? phone;
   final String? address;
   final String? nationalId;
-  final double farmSize;
+  //farmer details
+  final double? farmSize;
   final String? coordinates;
   final String locationId;
   final String? landOwnership;
@@ -47,11 +49,12 @@ class AddFarmerEvent extends FarmerEvent {
   final String email;
   final String password;
 
-  const AddFarmerEvent({
-    required this.name,
-    this.surname,
+  const AddPersonEvent({
+    required this.firstname,
+    this.lastname,
     this.dob,
     this.gender,
+    this.role,
     this.phone,
     this.address,
     this.nationalId,
@@ -69,10 +72,11 @@ class AddFarmerEvent extends FarmerEvent {
 
   @override
   List<Object?> get props => [
-        name,
-        surname,
+        firstname,
+        lastname,
         dob,
         gender,
+        role,
         phone,
         address,
         nationalId,
@@ -84,49 +88,6 @@ class AddFarmerEvent extends FarmerEvent {
         cropType,
         livestockType,
         livestockNumber,
-        email,
-        password,
-      ];
-
-  @override
-  bool? get stringify => true;
-}
-
-class AddUserEvent extends FarmerEvent {
-  final String name;
-  final String? surname;
-  final DateTime? dob;
-  final String? gender;
-  final String? role;
-  final String? phone;
-  final String? address;
-  final String? nationalId;
-  final String email;
-  final String password;
-
-  const AddUserEvent({
-    required this.name,
-    this.surname,
-    this.dob,
-    this.gender,
-    this.role,
-    this.phone,
-    this.address,
-    this.nationalId,
-    required this.email,
-    required this.password,
-  });
-
-  @override
-  List<Object?> get props => [
-        name,
-        surname,
-        dob,
-        gender,
-        role,
-        phone,
-        address,
-        nationalId,
         email,
         password,
       ];

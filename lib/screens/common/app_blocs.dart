@@ -5,6 +5,7 @@ import 'package:tisha_app/data/repositories/farmer/farmer_repository.dart';
 import 'package:tisha_app/data/repositories/feedback/feedback_repository.dart';
 import 'package:tisha_app/data/repositories/input/input_repository.dart';
 import 'package:tisha_app/data/repositories/location/location_repository.dart';
+import 'package:tisha_app/data/repositories/person/person_repository.dart';
 import 'package:tisha_app/data/repositories/user/user_repository.dart';
 import 'package:tisha_app/logic/auth_bloc/authentication_bloc.dart';
 import 'package:tisha_app/data/repositories/authentication/authentication_repository.dart';
@@ -14,6 +15,7 @@ import 'package:tisha_app/logic/feedback/feedback_bloc.dart';
 import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
 import 'package:tisha_app/logic/location_bloc/location_bloc.dart';
 import 'package:tisha_app/logic/farmer_bloc/farmer_bloc.dart';
+import 'package:tisha_app/logic/person_bloc%20/person_bloc.dart';
 import 'package:tisha_app/logic/user_bloc/user_bloc.dart';
 
 class AppBlocs extends StatelessWidget {
@@ -56,6 +58,12 @@ class AppBlocs extends StatelessWidget {
         BlocProvider(
           create: (context) => FarmerInputBloc(
             inputRepository: RepositoryProvider.of<InputRepository>(context),
+          ),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => PersonBloc(
+            personRepository: RepositoryProvider.of<PersonRepository>(context),
           ),
           lazy: false,
         ),

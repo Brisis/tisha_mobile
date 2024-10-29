@@ -16,17 +16,39 @@ class SearchInputs extends InputEvent {
 
 class LoadInputs extends InputEvent {}
 
+class NotifyInput extends InputEvent {
+  final String inputId;
+
+  const NotifyInput({
+    required this.inputId,
+  });
+}
+
 class AddInputEvent extends InputEvent {
   final String name;
   final int quantity;
-  final String unit;
+  final String? unit;
+  final String type;
+  final String scheme;
+  final String barcode;
+  final String? chassisNumber;
+  final String? engineType;
+  final String? numberPlate;
+  final String? color;
   final String locationId;
   final String userId;
 
   const AddInputEvent({
     required this.name,
     required this.quantity,
-    required this.unit,
+    this.unit,
+    required this.type,
+    required this.scheme,
+    required this.barcode,
+    this.chassisNumber,
+    this.engineType,
+    this.numberPlate,
+    this.color,
     required this.locationId,
     required this.userId,
   });
