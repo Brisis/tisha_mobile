@@ -54,7 +54,11 @@ class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
         child: BlocBuilder<InputBloc, InputState>(
           builder: (context, state) {
             if (state is LoadedInputs) {
-              final inputs = state.inputs.reversed.toList();
+              final inputs = state.inputs
+                  .where((input) => input.notified)
+                  .toList()
+                  .reversed
+                  .toList();
               return inputs.isNotEmpty
                   ? ListView.builder(
                       itemCount: inputs.length,
@@ -64,7 +68,7 @@ class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
                           child: InputItem(
                             name: inputs[index].name,
                             quantity: inputs[index].quantity,
-                            unit: inputs[index].unit,
+                            unit: inputs[index].unit ?? "",
                             date: inputs[index].createdAt,
                             onTap: () {
                               if (widget.farmer.locationId ==

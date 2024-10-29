@@ -1,66 +1,70 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/core/config/constants.dart';
-import 'package:tisha_app/data/models/farmer_input.dart';
-import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
+import 'package:tisha_app/data/models/input.dart';
+import 'package:tisha_app/logic/input_bloc/input_bloc.dart';
+import 'package:tisha_app/screens/field_officer_ui/field_officer_home_screen.dart';
 import 'package:tisha_app/screens/widgets/custom_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-class InputReportScreen extends StatefulWidget {
+class InputNotificationsScreen extends StatefulWidget {
   static Route route() {
     return MaterialPageRoute(
-      builder: (context) => const InputReportScreen(),
+      builder: (context) => const InputNotificationsScreen(),
     );
   }
 
-  const InputReportScreen({super.key});
+  const InputNotificationsScreen({super.key});
 
   @override
-  State<InputReportScreen> createState() => _InputReportScreenState();
+  State<InputNotificationsScreen> createState() =>
+      _InputNotificationsScreenState();
 }
 
-class _InputReportScreenState extends State<InputReportScreen> {
+class _InputNotificationsScreenState extends State<InputNotificationsScreen> {
   late String selectedDateFilter;
   String? selectedStatusFilter;
-  List<FarmerInput> inputs = [];
-  List<FarmerInput> dispInputs = [];
+  List<Input> inputs = [];
+  List<Input> dispInputs = [];
   @override
   void initState() {
     super.initState();
-    context.read<FarmerInputBloc>().add(LoadAllFarmerInputs());
+    context.read<InputBloc>().add(LoadInputs());
     selectedDateFilter = "Desc";
-  }
-
-  Future<void> requestStoragePermission() async {
-    if (await Permission.storage.request().isGranted) {
-      // Storage permission granted
-    } else {
-      // Handle the case if permission is denied
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<FarmerInputBloc, FarmerInputState>(
+    return BlocListener<InputBloc, InputState>(
       listener: (context, state) {
-        if (state is LoadedFarmerInputs) {
+        if (state is LoadedInputs) {
           setState(() {
             inputs = state.inputs;
             dispInputs = inputs;
           });
         }
+
+        if (state is NotificationSent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Notification created"),
+            ),
+          );
+        }
       },
       child: Scaffold(
-        backgroundColor: CustomColors.kBackgroundColor,
         appBar: AppBar(
           iconTheme: IconThemeData(color: CustomColors.kWhiteTextColor),
           backgroundColor: CustomColors.kPrimaryColor,
+          leading: IconButton(
+            onPressed: () =>
+                Navigator.push(context, FieldOfficerHomeScreen.route()),
+            icon: const Icon(Icons.arrow_back),
+          ),
           elevation: 1.0,
           title: Text(
-            "Input Reports",
+            "Notify Farmers",
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: CustomColors.kWhiteTextColor,
                 ),
@@ -77,13 +81,10 @@ class _InputReportScreenState extends State<InputReportScreen> {
                   setState(() {
                     dispInputs = inputs
                         .where((inp) =>
-                            inp.input.name
+                            inp.name
                                 .toLowerCase()
                                 .contains(value.toLowerCase()) ||
-                            inp.user!.name
-                                .toLowerCase()
-                                .contains(value.toLowerCase()) ||
-                            inp.user!.surname
+                            inp.barcode
                                 .toString()
                                 .toLowerCase()
                                 .contains(value.toLowerCase()))
@@ -121,24 +122,20 @@ class _InputReportScreenState extends State<InputReportScreen> {
                     child: CustomDropdown(
                       selectedItem: selectedStatusFilter,
                       onChanged: (value) {
-                        if (value == "Received") {
-                          setState(() {
-                            selectedStatusFilter = value;
-                            dispInputs = inputs
-                                .where((inp) => inp.received == true)
-                                .toList();
-                          });
-                        } else {
-                          setState(() {
-                            selectedStatusFilter = value;
-                            dispInputs = inputs
-                                .where((inp) => inp.received == false)
-                                .toList();
-                          });
-                        }
+                        setState(() {
+                          selectedStatusFilter = value;
+                          dispInputs = inputs
+                              .where((input) => input.type.name == value)
+                              .toList();
+                        });
                       },
-                      hintText: "Filter by Status",
-                      items: const ["Received", "In Progress"],
+                      hintText: "Filter Type",
+                      items: const [
+                        "Tructor",
+                        "Seeds",
+                        "Fertiliser",
+                        "Insecticide"
+                      ],
                     ),
                   ),
                 ],
@@ -160,6 +157,22 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
+                                'Notified',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                'Bar Code',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
                                 'Quantity',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
@@ -168,7 +181,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Given',
+                                'Unit',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -176,7 +189,7 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'To',
+                                'Type',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
@@ -184,63 +197,67 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Location',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Date',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Status',
+                                'Scheme',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
                             ),
                           ),
                         ],
                         rows: [
-                          for (var farmerInput in dispInputs)
+                          for (var input in dispInputs)
                             DataRow(
                               cells: <DataCell>[
                                 DataCell(
                                   Text(
-                                    farmerInput.input.name,
+                                    input.name,
                                   ),
                                 ),
                                 DataCell(
-                                  Text(farmerInput.input.quantity.toString()),
+                                  input.notified
+                                      ? Text(
+                                          "Yes",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                fontWeight: FontWeight.w500,
+                                                color:
+                                                    CustomColors.kPrimaryColor,
+                                              ),
+                                        )
+                                      : ElevatedButton(
+                                          onPressed: () => _showYesNoDialog(
+                                            context,
+                                            input,
+                                          ),
+                                          child: Text(
+                                            "Notify",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                        ),
                                 ),
                                 DataCell(
-                                  Text(farmerInput.quantity.toString()),
+                                  Text(input.barcode),
+                                ),
+                                DataCell(
+                                  Text(input.quantity.toString()),
+                                ),
+                                DataCell(
+                                  Text(input.unit ?? ""),
                                 ),
                                 DataCell(
                                   Text(
-                                      "${farmerInput.user?.name} ${farmerInput.user?.surname}"),
-                                ),
-                                DataCell(
-                                  Text(
-                                      "${farmerInput.user?.location?.name}, ${farmerInput.user?.location?.city}"),
-                                ),
-                                DataCell(
-                                  Text(
-                                    farmerInput.createdAt
-                                        .toIso8601String()
-                                        .substring(0, 10),
+                                    input.type.name,
                                   ),
                                 ),
                                 DataCell(
                                   Text(
-                                    farmerInput.received
-                                        ? "Received"
-                                        : "In Progress",
+                                    input.scheme.name,
                                   ),
                                 ),
                               ],
@@ -257,84 +274,50 @@ class _InputReportScreenState extends State<InputReportScreen> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: CustomColors.kPrimaryColor,
-          onPressed: () async {
-            List<List<String>> tableData = [
-              [
-                "Name",
-                "Quantity",
-                "Given Quantity",
-                "Farmer",
-                "Location",
-                "Date",
-                "Status"
-              ],
-            ];
-
-            //download here
-            final inputData = dispInputs
-                .map((input) => List<String>.from([
-                      (input.input.name),
-                      (input.input.quantity.toString()),
-                      input.quantity.toString(),
-                      "${input.user?.name} ${input.user?.surname}",
-                      "${input.user?.location?.name}, ${input.user?.location?.city}",
-                      (input.createdAt.toIso8601String().substring(0, 10)),
-                      input.received ? "Received" : "In Progress"
-                    ]))
-                .toList();
-
-            tableData.add(inputData.expand((element) => element).toList());
-
-            FileStorage.exportDataTableToExcel(tableData, "Input_Report_Data");
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("File saved to Downloads")),
-            );
-          },
-          shape: const CircleBorder(),
-          child: Icon(
-            Icons.download,
-            color: CustomColors.kWhiteTextColor,
-          ),
-        ),
       ),
     );
   }
-}
 
-class FilterOption extends StatelessWidget {
-  final String title;
-  final Function()? onTap;
-  const FilterOption({
-    super.key,
-    required this.title,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: CustomColors.kBorderColor,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
+  void _showYesNoDialog(BuildContext context, Input input) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content:
+              Text("Do you want to make a notification for ${input.name}?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<InputBloc>().add(
+                      NotifyInput(
+                        inputId: input.id,
+                      ),
+                    );
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

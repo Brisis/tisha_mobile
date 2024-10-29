@@ -76,7 +76,14 @@ class InputProvider {
     required String token,
     required String name,
     required int quantity,
-    required String unit,
+    required String? unit,
+    required String type,
+    required String scheme,
+    required String barcode,
+    required String? chassisNumber,
+    required String? engineType,
+    required String? numberPlate,
+    required String? color,
     required String locationId,
     required String userId,
   }) async {
@@ -85,12 +92,43 @@ class InputProvider {
         "name": name,
         "quantity": quantity,
         "unit": unit,
+        "type": type,
+        "scheme": scheme,
+        "barcode": barcode,
+        "chassisNumber": chassisNumber,
+        "engineType": engineType,
+        "numberPlate": numberPlate,
+        "color": color,
         "locationId": locationId,
         "userId": userId,
       };
       final response = await http.post(
         Uri.parse("${AppUrls.SERVER_URL}/inputs"),
         body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return HttpHandler.returnResponse(response);
+    } on SocketException {
+      throw const FetchDataException(message: "No Internet connection");
+    } on TimeoutException {
+      throw const ApiNotRespondingException(message: "Api not responding");
+      // throw ExceptionHandlers.getExceptionString(e);
+    }
+  }
+
+  Future<dynamic> notifyInput({
+    required String token,
+    required String inputId,
+  }) async {
+    try {
+      final response = await http.patch(
+        Uri.parse("${AppUrls.SERVER_URL}/inputs/$inputId/notify"),
         headers: {
           "Content-Type": "application/json",
           "accept": "application/json",

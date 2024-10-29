@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:tisha_app/data/models/input.dart';
+import 'package:tisha_app/data/models/location.dart';
 
 class FarmerInput extends Equatable {
   final String id;
@@ -69,19 +70,24 @@ class FarmerUser extends Equatable {
   final String id;
   final String name;
   final String? surname;
+  final Location? location;
 
   const FarmerUser({
     required this.id,
     required this.name,
     this.surname,
+    this.location,
   });
 
   String toRawJson() => json.encode(toJson());
 
   FarmerUser.fromJson(Map<String, dynamic> json)
       : id = json["id"],
-        name = json["name"],
-        surname = json["surname"] == null ? null : json["surname"] as String;
+        name = json["firstname"],
+        surname = json["lastname"] == null ? null : json["lastname"] as String,
+        location = json["location"] == null
+            ? null
+            : Location.fromJson(json["location"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,

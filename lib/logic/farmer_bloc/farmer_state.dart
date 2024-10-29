@@ -13,12 +13,6 @@ class FarmerStateLoading extends FarmerState {}
 
 class FarmerStateSearchLoading extends FarmerState {}
 
-class FarmerStateSwiped extends FarmerState {}
-
-class FarmerStateSkipped extends FarmerState {}
-
-class FarmerStateUnSwiped extends FarmerState {}
-
 class LoadedFarmer extends FarmerState {
   final User farmer;
   const LoadedFarmer({

@@ -12,6 +12,8 @@ import 'package:tisha_app/data/repositories/input/input_provider.dart';
 import 'package:tisha_app/data/repositories/input/input_repository.dart';
 import 'package:tisha_app/data/repositories/farmer/farmer_provider.dart';
 import 'package:tisha_app/data/repositories/farmer/farmer_repository.dart';
+import 'package:tisha_app/data/repositories/person/person_provider.dart';
+import 'package:tisha_app/data/repositories/person/person_repository.dart';
 import 'package:tisha_app/data/repositories/user/user_provider.dart';
 import 'package:tisha_app/data/repositories/user/user_repository.dart';
 
@@ -34,6 +36,11 @@ class AppRepositories extends StatelessWidget {
         RepositoryProvider(
           create: (context) => UserRepository(
             userProvider: UserProvider(),
+          ),
+        ),
+        RepositoryProvider(
+          create: (context) => PersonRepository(
+            personProvider: PersonProvider(),
           ),
         ),
         RepositoryProvider(

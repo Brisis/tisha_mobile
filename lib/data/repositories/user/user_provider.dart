@@ -17,8 +17,8 @@ class UserProvider {
   }) async {
     try {
       Map body = {
-        "name": user.name,
-        "surname": user.surname,
+        "firstname": user.firstname,
+        "lastname": user.lastname,
         "dob": user.dob?.toIso8601String(),
         "age": user.age,
         "gender": user.gender?.name,

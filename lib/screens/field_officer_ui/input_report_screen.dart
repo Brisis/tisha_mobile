@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tisha_app/core/config/constants.dart';
 import 'package:tisha_app/data/models/farmer_input.dart';
 import 'package:tisha_app/logic/farmer_input_bloc/farmer_input_bloc.dart';
 import 'package:tisha_app/screens/widgets/custom_dropdown.dart';
 import 'package:tisha_app/theme/colors.dart';
 import 'package:tisha_app/theme/spaces.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class InputReportScreen extends StatefulWidget {
   static Route route() {
@@ -32,14 +30,6 @@ class _InputReportScreenState extends State<InputReportScreen> {
     super.initState();
     context.read<FarmerInputBloc>().add(LoadAllFarmerInputs());
     selectedDateFilter = "Desc";
-  }
-
-  Future<void> requestStoragePermission() async {
-    if (await Permission.storage.request().isGranted) {
-      // Storage permission granted
-    } else {
-      // Handle the case if permission is denied
-    }
   }
 
   @override
@@ -184,14 +174,6 @@ class _InputReportScreenState extends State<InputReportScreen> {
                           DataColumn(
                             label: Expanded(
                               child: Text(
-                                'Location',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
                                 'Date',
                                 style: TextStyle(fontStyle: FontStyle.italic),
                               ),
@@ -227,10 +209,6 @@ class _InputReportScreenState extends State<InputReportScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                      "${farmerInput.user?.location?.name}, ${farmerInput.user?.location?.city}"),
-                                ),
-                                DataCell(
-                                  Text(
                                     farmerInput.createdAt
                                         .toIso8601String()
                                         .substring(0, 10),
@@ -255,48 +233,6 @@ class _InputReportScreenState extends State<InputReportScreen> {
                       ),
                     ),
             ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: CustomColors.kPrimaryColor,
-          onPressed: () async {
-            List<List<String>> tableData = [
-              [
-                "Name",
-                "Quantity",
-                "Given Quantity",
-                "Farmer",
-                "Location",
-                "Date",
-                "Status"
-              ],
-            ];
-
-            //download here
-            final inputData = dispInputs
-                .map((input) => List<String>.from([
-                      (input.input.name),
-                      (input.input.quantity.toString()),
-                      input.quantity.toString(),
-                      "${input.user?.name} ${input.user?.surname}",
-                      "${input.user?.location?.name}, ${input.user?.location?.city}",
-                      (input.createdAt.toIso8601String().substring(0, 10)),
-                      input.received ? "Received" : "In Progress"
-                    ]))
-                .toList();
-
-            tableData.add(inputData.expand((element) => element).toList());
-
-            FileStorage.exportDataTableToExcel(tableData, "Input_Report_Data");
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("File saved to Downloads")),
-            );
-          },
-          shape: const CircleBorder(),
-          child: Icon(
-            Icons.download,
-            color: CustomColors.kWhiteTextColor,
           ),
         ),
       ),

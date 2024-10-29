@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     loggedUser = context.read<UserBloc>().state.user!;
-    _nameController.text = loggedUser.name;
+    _nameController.text = loggedUser.firstname;
     if (loggedUser.farmSize != null) {
       _sizeController.text = loggedUser.farmSize.toString();
     }
@@ -78,12 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CustomSpaces.verticalSpace(height: 15),
                     Text(
-                      "${loggedUser.name} ${loggedUser.surname}",
+                      "${loggedUser.firstname} ${loggedUser.lastname}",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     CustomSpaces.verticalSpace(),
                     Text(
-                      "Role: ${loggedUser.role}",
+                      "Role: ${loggedUser.role.name}",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: CustomColors.kBoldTextColor,
                           ),

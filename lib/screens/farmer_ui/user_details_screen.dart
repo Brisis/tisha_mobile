@@ -74,8 +74,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         .locations
         .firstWhere((element) => element.id == loggedUser.locationId);
     selectedDate = loggedUser.dob;
-    _nameController.text = loggedUser.name;
-    _surnameController.text = loggedUser.surname ?? "";
+    _nameController.text = loggedUser.firstname;
+    _surnameController.text = loggedUser.lastname ?? "";
     _nationalIdController.text = loggedUser.nationalId ?? "";
     selectedGender = loggedUser.gender?.name;
     _phoneNumberController.text = loggedUser.phone ?? "";
@@ -401,8 +401,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                             context.read<UserBloc>().add(
                                   UserEventUpdateDetails(
                                     user: loggedUser.copyWith(
-                                      name: _nameController.text.trim(),
-                                      surname: _surnameController.text.trim(),
+                                      firstname: _nameController.text.trim(),
+                                      lastname: _surnameController.text.trim(),
                                       dob: selectedDate,
                                       age: selectedDate != null
                                           ? (DateTime.now().year -

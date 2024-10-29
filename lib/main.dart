@@ -14,7 +14,7 @@ import 'package:tisha_app/screens/auth/auth_login_screen.dart';
 import 'package:tisha_app/screens/common/app_blocs.dart';
 import 'package:tisha_app/screens/common/app_repositories.dart';
 import 'package:tisha_app/screens/farmer_ui/farmer_profile_screen.dart';
-import 'package:tisha_app/screens/welcome_screen.dart';
+import 'package:tisha_app/screens/field_officer_ui/field_officer_home_screen.dart';
 import 'package:tisha_app/theme/typography.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -46,7 +46,7 @@ class _MainAppState extends State<MainApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      title: 'Tisha App',
+      title: 'GovFarmInputTracker',
       theme: ThemeData(
         textTheme: GoogleFonts.openSansTextTheme(CustomTypography.textTheme)
             .copyWith(),
@@ -72,9 +72,14 @@ class _MainAppState extends State<MainApp> {
               BlocProvider.of<FarmerApplicationBloc>(context)
                   .add(LoadApplications());
               BlocProvider.of<FeedbackBloc>(context).add(LoadFeedbacks());
-              if (state.user.role == "FARMER") {
+              if (state.user.role.name == "FARMER") {
                 _navigator!.pushAndRemoveUntil(
                   FarmerProfileScreen.route(),
+                  (route) => false,
+                );
+              } else if (state.user.role.name == "FIELDOFFICER") {
+                _navigator!.pushAndRemoveUntil(
+                  FieldOfficerHomeScreen.route(),
                   (route) => false,
                 );
               } else {
@@ -94,7 +99,8 @@ class _MainAppState extends State<MainApp> {
 
             if (state is AuthenticationStateUserNotLoggedIn) {
               _navigator!.pushAndRemoveUntil(
-                WelcomeScreen.route(),
+                //WelcomeScreen.route(),
+                AuthLoginScreen.route(),
                 (route) => false,
               );
             }

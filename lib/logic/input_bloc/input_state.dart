@@ -13,6 +13,10 @@ class InputStateSearchLoading extends InputState {}
 
 class InputStateLoading extends InputState {}
 
+class NotificationSent extends InputState {}
+
+class InputCreated extends InputState {}
+
 class LoadedInputs extends InputState {
   final List<Input> inputs;
   const LoadedInputs({

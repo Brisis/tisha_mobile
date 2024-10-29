@@ -122,7 +122,7 @@ class LocationItem extends StatelessWidget {
         maxRadius: 40,
         backgroundColor: CustomColors.kContainerBackgroundColor,
         child: Icon(
-          Icons.person,
+          Icons.location_city,
           color: CustomColors.kIconColor,
         ),
       ),
