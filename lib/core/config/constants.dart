@@ -10,8 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
 abstract class AppUrls {
-  //static String SERVER_URL = "http://192.168.100.2:8000";
-  static String SERVER_URL = "http://192.168.1.230:8000";
+  static String SERVER_URL = "http://192.168.100.2:8000";
+  // static String SERVER_URL = "http://192.168.1.230:8000";
 }
 
 class FileStorage {
